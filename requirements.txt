@@ -1,0 +1,15 @@
+# Phase 0: 데이터 전처리 필수
+lxml>=5.0.0              # TEI-XML 파싱
+pandas>=2.0.0            # 데이터프레임
+openpyxl>=3.1.0          # xlsx 생성
+requests>=2.31.0         # hanja.dev API, 웹 요청
+beautifulsoup4>=4.12.0   # 고전종합DB 크롤링 HTML 파싱
+
+# Phase 1~2: 모델링 (Phase 0 완료 후 추가 예정)
+# transformers>=4.40.0
+# torch>=2.2.0
+# scikit-learn>=1.4.0
+# scipy>=1.12.0
+# sentence-transformers>=2.7.0
+# matplotlib>=3.8.0
+# optuna>=3.6.0
