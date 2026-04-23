@@ -1,25 +1,26 @@
 """
 04_align.py
 
-칸리포 원본(02번 산출물)과 祝平次 편집본(03번 산출물)을 권 단위로 정렬·비교한다.
+칸리포 원본(02)과 祝平次 편집본(03)을 권 단위로 정렬·비교한다.
 
-핵심 아이디어:
-  - 두 버전은 표점 유무가 달라 직접 비교 불가
-    · 칸리포: 한자만, 표점 없음
-    · 祝平次: 「」、。，？ 등 표점 풍부
-  - → 祝平次를 "백문(표점 제거)"으로 만든 뒤 칸리포와 문자 단위 비교
-  - 표점 제거: CJK 한자 블록만 남기고 나머지 전부 제거
-    (이체자 확장 블록 포함: Ext A/B~, Compatibility)
-  - 정렬: difflib.SequenceMatcher (문자 단위)
-  - 불일치 구간 추출: get_opcodes()에서 equal 이외의 항목
+두 일치율을 병기한다:
+  - strict_ratio  : 이체자(𫝊↔傳 등)도 불일치로 카운트. 순수 문자 일치율.
+  - relaxed_ratio : 이체자(길이 일치 replace)를 일치로 재분류한 "판본 일치율".
+                    실질 판본 차이만 불일치로 본다. 논문 보고용 주 지표.
+
+불일치를 두 종류로 분리 저장:
+  - variant       : 길이 일치 replace (이체자 치환, 판본학적 부록 자료)
+  - substantive   : 나머지 (길이 불일치 replace, delete, insert — 실질 차이)
 
 입력:
   data/intermediate/kanripo_parsed.jsonl   (02번)
   data/intermediate/zhuzi_parsed.jsonl     (03번)
 
-출력:
-  data/final/alignment_summary.csv   권별 요약 (GitHub 공개)
-  data/final/zhuzi_mismatch.csv      불일치 상세 (GitHub 공개)
+출력 (data/final/):
+  alignment_summary.csv              권별 요약 (strict + relaxed)
+  zhuzi_mismatch.csv                 불일치 전체 (기존 유지, is_variant 플래그 추가)
+  zhuzi_mismatch_variant.csv         이체자 치환만 (판본학 부록)
+  zhuzi_mismatch_substantive.csv     실질 불일치 (05의 hanja.dev 대상 후보)
 
 사용법:
   python scripts/04_align.py
@@ -43,17 +44,14 @@ ZHUZI_JSONL = PROJECT_ROOT / "data" / "intermediate" / "zhuzi_parsed.jsonl"
 OUT_DIR = PROJECT_ROOT / "data" / "final"
 SUMMARY_CSV = OUT_DIR / "alignment_summary.csv"
 MISMATCH_CSV = OUT_DIR / "zhuzi_mismatch.csv"
+VARIANT_CSV = OUT_DIR / "zhuzi_mismatch_variant.csv"
+SUBSTANTIVE_CSV = OUT_DIR / "zhuzi_mismatch_substantive.csv"
 
 # ---------- 설정 ----------
 
-# 불일치 구간 앞뒤로 보여줄 맥락 길이
 CONTEXT_LEN = 20
 
-# CJK 한자 블록만 남기는 정규식
-# - \u3400-\u4dbf : CJK Extension A
-# - \u4e00-\u9fff : CJK Unified Ideographs (일반 한자)
-# - \uf900-\ufaff : CJK Compatibility Ideographs
-# - \U00020000-\U0002ffff : Extensions B~H (이체자 등)
+# CJK 한자 블록 (이체자 포함)
 HANZI_RE = re.compile(
     r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\U00020000-\U0002ffff]"
 )
@@ -62,7 +60,6 @@ HANZI_RE = re.compile(
 # ---------- 유틸 ----------
 
 def to_plain(text: str) -> str:
-    """한자 외 모든 문자 제거 (표점, 공백, 영숫자 등)."""
     return "".join(HANZI_RE.findall(text))
 
 
@@ -75,7 +72,6 @@ def load_jsonl(path: Path) -> list[dict]:
 
 
 def context_slice(text: str, pos: int, after: bool = False) -> str:
-    """pos 앞쪽(기본) 또는 뒤쪽(after=True)으로 CONTEXT_LEN만큼 자른 문자열."""
     if after:
         return text[pos:pos + CONTEXT_LEN]
     return text[max(0, pos - CONTEXT_LEN):pos]
@@ -83,30 +79,52 @@ def context_slice(text: str, pos: int, after: bool = False) -> str:
 
 # ---------- 정렬 ----------
 
-def align_one(kanripo_text: str, zhuzi_plain: str) -> tuple[float, list[dict]]:
+def align_one(
+    kanripo_text: str, zhuzi_plain: str
+) -> tuple[float, float, list[dict]]:
     """
-    두 텍스트를 정렬하고 (ratio, mismatch 리스트) 반환.
-    위치는 칸리포 원본 기준.
-    autojunk=True: 200자 이상 반복 요소를 junk로 취급해 속도 개선.
-    이 텍스트에서는 '理氣' 같은 단어가 반복되지만 긴 유일 시퀀스가 대부분이라 OK.
+    두 텍스트를 정렬하고 (strict_ratio, relaxed_ratio, 불일치 리스트) 반환.
+
+    불일치 각 항목에 is_variant (이체자 치환 여부) 플래그를 붙인다.
+      - is_variant = True : replace 이면서 len(k) == len(z) (이체자 1:1 치환)
+      - is_variant = False: 나머지 (실질 차이)
+
+    relaxed_ratio는 이체자를 equal로 재분류한 후 SequenceMatcher.ratio()와
+    동일 공식(2*M/T)으로 재계산한다.
     """
     matcher = SequenceMatcher(None, kanripo_text, zhuzi_plain)
-    ratio = matcher.ratio()
+    strict_ratio = matcher.ratio()
+
     mismatches: list[dict] = []
+    equal_chars = 0      # equal span의 k 글자 수 (이게 matcher의 matches와 동일)
+    variant_chars = 0    # 이체자 span의 k 글자 수 (len 일치라 z도 같음)
 
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag == "equal":
+            equal_chars += i2 - i1
             continue
+
+        is_variant = (tag == "replace" and (i2 - i1) == (j2 - j1))
+        if is_variant:
+            variant_chars += i2 - i1
+
         mismatches.append({
-            "type": tag,                       # replace / delete / insert
+            "type": tag,
             "kanripo_pos": f"{i1}-{i2}",
             "kanripo_text": kanripo_text[i1:i2],
             "zhuzi_text": zhuzi_plain[j1:j2],
             "context_before": context_slice(kanripo_text, i1),
             "context_after": context_slice(kanripo_text, i2, after=True),
+            "is_variant": is_variant,
         })
 
-    return ratio, mismatches
+    # relaxed ratio: 이체자를 equal로 취급. 이체자 span은 len(k)==len(z)이므로
+    # matches에 2*variant_chars가 추가되는 것과 같은 효과.
+    total = len(kanripo_text) + len(zhuzi_plain)
+    relaxed_match = equal_chars + variant_chars
+    relaxed_ratio = (2.0 * relaxed_match / total) if total else 0.0
+
+    return strict_ratio, relaxed_ratio, mismatches
 
 
 # ---------- 메인 ----------
@@ -120,7 +138,6 @@ def main() -> None:
     print(f"       칸리포 레코드: {len(kanripo)}")
     print(f"       祝平次 레코드: {len(zhuzi)}")
 
-    # 두 소스 모두에 있는 juan_label만 처리. 한쪽에만 있는 건 경고.
     common = sorted(set(kanripo) & set(zhuzi),
                     key=lambda lbl: (kanripo[lbl]["juan_num"], lbl))
     only_k = set(kanripo) - set(zhuzi)
@@ -133,21 +150,24 @@ def main() -> None:
     print(f"\n[ALIGN] {len(common)}개 섹션 정렬 중...")
 
     summary_rows: list[dict] = []
-    mismatch_rows: list[dict] = []
+    all_mismatches: list[dict] = []
+    variant_rows: list[dict] = []
+    substantive_rows: list[dict] = []
 
     for idx, label in enumerate(common, 1):
-        k_text = kanripo[label]["raw_concat"]          # 이미 한자만 (표점 없음)
-        z_raw = zhuzi[label]["raw_concat"]             # 표점 포함
-        z_plain = to_plain(z_raw)                      # 한자만 남김
+        k_raw = kanripo[label]["raw_concat"]
+        z_raw = zhuzi[label]["raw_concat"]
+        k_plain = to_plain(k_raw)
+        z_plain = to_plain(z_raw)
 
-        # 추가 안전장치: 칸리포 쪽도 한자만 남기기
-        # (이론상 이미 그렇지만 혹시 모를 노이즈 방어)
-        k_plain = to_plain(k_text)
-
-        ratio, mismatches = align_one(k_plain, z_plain)
+        strict_r, relaxed_r, mismatches = align_one(k_plain, z_plain)
 
         if idx % 20 == 0 or idx == len(common):
-            print(f"  ... {idx}/{len(common)}  ({label}, ratio={ratio:.4f})")
+            print(f"  ... {idx}/{len(common)}  ({label}, "
+                  f"strict={strict_r:.4f}, relaxed={relaxed_r:.4f})")
+
+        variant_count = sum(1 for m in mismatches if m["is_variant"])
+        substantive_count = len(mismatches) - variant_count
 
         summary_rows.append({
             "juan_label": label,
@@ -155,59 +175,94 @@ def main() -> None:
             "kanripo_chars": len(k_plain),
             "zhuzi_plain_chars": len(z_plain),
             "zhuzi_with_punct_chars": len(z_raw),
-            "ratio": f"{ratio:.4f}",
+            "strict_ratio": f"{strict_r:.4f}",
+            "relaxed_ratio": f"{relaxed_r:.4f}",
             "mismatch_count": len(mismatches),
+            "variant_count": variant_count,
+            "substantive_count": substantive_count,
         })
 
         for m in mismatches:
-            mismatch_rows.append({"juan_label": label, **m})
+            row = {"juan_label": label, **m}
+            all_mismatches.append(row)
+            if m["is_variant"]:
+                variant_rows.append(row)
+            else:
+                substantive_rows.append(row)
 
-    # CSV 저장 (권 번호 순으로 정렬)
     summary_rows.sort(key=lambda r: (r["juan_num"], r["juan_label"]))
 
+    # ---- CSV 저장 ----
     with SUMMARY_CSV.open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(summary_rows[0].keys()))
         w.writeheader()
         w.writerows(summary_rows)
 
-    with MISMATCH_CSV.open("w", encoding="utf-8-sig", newline="") as f:
-        fieldnames = ["juan_label", "type", "kanripo_pos",
-                      "kanripo_text", "zhuzi_text",
-                      "context_before", "context_after"]
-        w = csv.DictWriter(f, fieldnames=fieldnames)
-        w.writeheader()
-        w.writerows(mismatch_rows)
+    mismatch_fields = [
+        "juan_label", "type", "kanripo_pos",
+        "kanripo_text", "zhuzi_text",
+        "context_before", "context_after", "is_variant",
+    ]
 
-    # 전체 지표
+    def write_mismatches(path: Path, rows: list[dict]) -> None:
+        with path.open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=mismatch_fields)
+            w.writeheader()
+            for r in rows:
+                w.writerow({k: r.get(k, "") for k in mismatch_fields})
+
+    write_mismatches(MISMATCH_CSV, all_mismatches)
+    write_mismatches(VARIANT_CSV, variant_rows)
+    write_mismatches(SUBSTANTIVE_CSV, substantive_rows)
+
+    # ---- 전체 지표 ----
     total_k = sum(r["kanripo_chars"] for r in summary_rows)
     total_z = sum(r["zhuzi_plain_chars"] for r in summary_rows)
-    total_mismatches = len(mismatch_rows)
 
-    # 전체 ratio: 권별 평균 말고, 전권을 하나로 이어서 계산한 지표가 더 의미 있음
-    # 권별 ratio의 가중 평균 (길이 기준)으로 근사
-    weighted = sum(
-        float(r["ratio"]) * (r["kanripo_chars"] + r["zhuzi_plain_chars"])
-        for r in summary_rows
-    )
-    denom = sum(r["kanripo_chars"] + r["zhuzi_plain_chars"] for r in summary_rows)
-    overall_ratio = weighted / denom if denom else 0.0
+    def weighted_avg(key: str) -> float:
+        num = sum(
+            float(r[key]) * (r["kanripo_chars"] + r["zhuzi_plain_chars"])
+            for r in summary_rows
+        )
+        denom = sum(r["kanripo_chars"] + r["zhuzi_plain_chars"]
+                    for r in summary_rows)
+        return num / denom if denom else 0.0
+
+    overall_strict = weighted_avg("strict_ratio")
+    overall_relaxed = weighted_avg("relaxed_ratio")
 
     print(f"\n[DONE]")
-    print(f"  요약:   {SUMMARY_CSV}")
-    print(f"  불일치: {MISMATCH_CSV}")
-    print(f"\n  전체 일치율 (길이 가중 평균): {overall_ratio:.4%}")
+    print(f"  요약:       {SUMMARY_CSV}")
+    print(f"  불일치 전체: {MISMATCH_CSV}")
+    print(f"  이체자만:   {VARIANT_CSV}       ({len(variant_rows):,}건)")
+    print(f"  실질 불일치: {SUBSTANTIVE_CSV}   ({len(substantive_rows):,}건)")
+    print()
     print(f"  칸리포 총 글자:  {total_k:,}")
     print(f"  祝平次 총 글자:  {total_z:,}  (백문, 표점 제거)")
-    print(f"  불일치 레코드:   {total_mismatches:,}")
+    print()
+    print(f"  전체 strict 일치율  (길이 가중):  {overall_strict:.4%}")
+    print(f"  전체 relaxed 일치율 (이체자 제외): {overall_relaxed:.4%}")
+    print(f"  불일치 전체:     {len(all_mismatches):,}건")
+    print(f"    ├ 이체자:     {len(variant_rows):,}건  "
+          f"({len(variant_rows) / len(all_mismatches) * 100:.2f}%)")
+    print(f"    └ 실질 불일치: {len(substantive_rows):,}건  "
+          f"({len(substantive_rows) / len(all_mismatches) * 100:.2f}%)")
 
-    # 최악·최상 권 몇 개
-    sorted_by_ratio = sorted(summary_rows, key=lambda r: float(r["ratio"]))
-    print(f"\n  일치율 낮은 권 Top 5:")
-    for r in sorted_by_ratio[:5]:
-        print(f"    {r['juan_label']:10s}  {r['ratio']}  (불일치 {r['mismatch_count']}건)")
-    print(f"  일치율 높은 권 Top 3:")
-    for r in sorted_by_ratio[-3:]:
-        print(f"    {r['juan_label']:10s}  {r['ratio']}  (불일치 {r['mismatch_count']}건)")
+    # 실질 불일치 type 분포
+    from collections import Counter
+    sub_types = Counter(r["type"] for r in substantive_rows)
+    print(f"\n  실질 불일치 type 분포:")
+    for t, n in sub_types.most_common():
+        print(f"    {t:10s}  {n:,}건")
+
+    # 최악·최상 권
+    sorted_by_relaxed = sorted(summary_rows,
+                                key=lambda r: float(r["relaxed_ratio"]))
+    print(f"\n  relaxed 일치율 낮은 권 Top 5:")
+    for r in sorted_by_relaxed[:5]:
+        print(f"    {r['juan_label']:10s}  strict={r['strict_ratio']}  "
+              f"relaxed={r['relaxed_ratio']}  "
+              f"(실질 불일치 {r['substantive_count']}건)")
 
 
 if __name__ == "__main__":
