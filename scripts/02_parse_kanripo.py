@@ -74,9 +74,15 @@ RE_JUAN_PROPERTY = re.compile(r"^#\+PROPERTY:\s*JUAN\s+(.+?)\s*$")
 
 # 표지 텍스트 (문단/제목 모두 아닌 것)
 COVER_PATTERNS = [
-    re.compile(r"^欽定四庫全書"),      # 시리즈 표지
-    re.compile(r"^朱子語類卷[一二三四五六七八九十百]+$"),  # 책 제목
-    re.compile(r"^朱子語類提要$"),      # 제요 제목
+    re.compile(r"^欽定四庫全書"),
+    # 卷/巻 이체자 모두, 第 유무 모두, 한자숫자 (오식 "二百十五" 포함)
+    re.compile(r"^朱子語類[卷巻]第?[一二三四五六七八九十百]+$"),
+    re.compile(r"^朱子語類提要$"),
+    re.compile(r"^朱子語類原序$"),
+    re.compile(r"^朱子語類門目$"),
+    re.compile(r"^朱子語類姓氏$"),
+    # 권0 첫 줄: "朱子語類　　　　　　　儒家類" 형식 (전각공백 섞임)
+    re.compile(r"^朱子語類[\u3000\s]+儒家類$"),
 ]
 
 

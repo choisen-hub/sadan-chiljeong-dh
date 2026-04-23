@@ -123,10 +123,22 @@ def collect_content(div, depth: int, headings: list[dict], paragraphs: list[str]
                 headings.append({"level": depth + 1, "text": head_text})
 
     # 직계 p 수집
+    # 주의: <p rend="heading N"> 은 본문이 아니라 소제목이므로 headings에 넣음
     for p in div.findall(q("p")):
-        text = extract_text(p).strip()
-        if text:
-            paragraphs.append(text)
+        rend = p.get("rend", "")
+        if rend.startswith("heading"):
+            m = re.search(r"\d+", rend)
+            level = int(m.group()) if m else (depth + 1)
+            head_text = extract_text(p).strip()
+            if head_text:
+                headings.append({"level": level, "text": head_text})
+        else:
+            text = extract_text(p).strip()
+            # p 끝에 원본 목판의 권말 표지 문구(예: "朱子語類卷一")가
+            # 포함된 경우가 있음. 후처리로 제거.
+            text = re.sub(r"朱子語類[卷巻]第?[一二三四五六七八九十百]+\s*$", "", text).rstrip()
+            if text:
+                paragraphs.append(text)
 
     # 직계 list/item 수집 (주로 姓氏 섹션)
     for lst in div.findall(q("list")):
@@ -142,6 +154,24 @@ def collect_content(div, depth: int, headings: list[dict], paragraphs: list[str]
 
 def make_record(juan_label: str, headings: list[dict], paragraphs: list[str]) -> dict:
     """단일 레코드 dict 생성."""
+    # 祝平次 XML의 일부 권(卷三十四, 卷七十五)에 동일 문단이 70여 회 반복되는
+    # 데이터 파손이 있음. 5회 이상 반복되는 문단은 첫 등장만 남겨 중복 제거.
+    from collections import Counter
+    counts = Counter(paragraphs)
+    seen: set[str] = set()
+    cleaned: list[str] = []
+    removed = 0
+    for p in paragraphs:
+        if counts[p] >= 5 and p in seen:
+            removed += 1
+            continue
+        cleaned.append(p)
+        seen.add(p)
+    if removed > 0:
+        print(f"  [DEDUPE] {juan_label}: {removed}개 중복 문단 제거 "
+              f"(원본 {len(paragraphs)} → {len(cleaned)})")
+    paragraphs = cleaned
+
     return {
         "juan_num": parse_juan_num(juan_label),
         "juan_label": juan_label,
