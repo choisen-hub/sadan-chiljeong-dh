@@ -317,6 +317,7 @@ def main() -> None:
                 "paragraphs_plain": krec["paragraphs"],
                 "paragraphs_punctuated": list(krec["paragraphs"]),  # 백문 그대로
                 "paragraphs_provenance": [" " * len(p) for p in krec["paragraphs"]],
+                "paragraphs_byline": krec.get("paragraphs_byline", [None] * len(krec["paragraphs"])),
                 "fallback_span_count": 0,
                 "zhuzi_matched": False,
             })
@@ -353,6 +354,7 @@ def main() -> None:
             "paragraphs_plain": krec["paragraphs"],
             "paragraphs_punctuated": paras_punct,
             "paragraphs_provenance": paras_prov,
+            "paragraphs_byline": krec.get("paragraphs_byline", [None] * len(krec["paragraphs"])),
             "fallback_span_count": len(fallbacks),
             "zhuzi_matched": True,
         })

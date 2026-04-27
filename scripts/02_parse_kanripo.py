@@ -17,11 +17,19 @@
         {"level": 2, "text": "理氣上"},
         {"level": 3, "text": "太極天地上"}
       ],
-      "paragraphs": [                # 문단 리스트
+      "paragraphs": [                # 문단 본문 (byline 제거됨, 분석용)
         "問太極不是未有天地之先有箇渾成之物...",
         "問昨謂未有天地之先畢竟是先有理如何曰..."
       ],
-      "raw_concat": "問太極...又輕之嘗有簡"  # 문단 전체 이어붙인 것 (비교용)
+      "paragraphs_raw": [             # byline 포함 원문 (재현용)
+        "問太極不是未有天地之先有箇渾成之物...(僴/)",
+        "問昨謂未有天地之先畢竟是先有理如何曰...(賀孫/)"
+      ],
+      "paragraphs_byline": [          # 각 문단의 byline 메타 (없으면 null)
+        {"raw": "(僴/)"},
+        {"raw": "(賀孫/)"}
+      ],
+      "raw_concat": "問太極...又輕之嘗有簡"  # paragraphs(byline 제거본) 이어붙임
     }
 
 처리 규칙:
@@ -34,9 +42,17 @@
       1칸(전각공백 1개): 본문 이어짐 (앞 문단과 합침)
       2~4칸: 제목 (편/절/소절) → headings에 기록, 본문에서 제외
 
+화자표시(byline) 처리:
+  - 칸리포 () 안 패턴 100%가 슬래시 포함. 두 종류로 갈림:
+      (a) 8자 이하 + '/' 포함 → byline 후보, 약 12,600건
+      (b) 그 외                → 편집 주석, 본문에 그대로 둠
+  - paragraph 끝에 붙은 (a)는 raw 그대로 paragraphs_byline에 보존하고
+    paragraphs(분석용 본문)에서는 제거. 누가 기록자인지는 식별하지 않음.
+    목적은 (i) utterance 경계 신호, (ii) 본문 임베딩 시 noise 제거.
+  - paragraphs_raw는 손대지 않은 원문.
+
 주의:
-  - 화자 표시 (淳/) 등 괄호 주석은 그대로 보존 (祝平次와의 비교 위해)
-  - 이체자도 그대로 보존
+  - 이체자는 그대로 보존
 
 사용법:
   python scripts/02_parse_kanripo.py
@@ -71,6 +87,37 @@ HANZI_NUM = {
 # 제거 대상 패턴
 RE_PB = re.compile(r"<pb:[^>]+>")
 RE_JUAN_PROPERTY = re.compile(r"^#\+PROPERTY:\s*JUAN\s+(.+?)\s*$")
+
+# Byline / 괄호주석 패턴.
+# 칸리포 데이터 전수 조사 결과 () 안은 100% '/' 포함.
+# 길이 8자 이하 + '/' 포함 → 발화 기록자(speaker)로 분류 (~14,039건)
+# 길이 9자 이상         → 편집 주석(note)으로 분류 (~2,267건)
+RE_PAREN = re.compile(r"\(([^()]{1,80})\)")
+BYLINE_MAX_LEN = 8  # 8자 이하 + 슬래시 포함 → byline 후보
+
+
+def extract_trailing_byline(text: str) -> tuple[str, dict | None]:
+    """
+    문단 끝에 붙은 byline을 본문에서 떼어낸다.
+
+    목적은 두 가지뿐:
+      1. utterance 경계 신호 (이 paragraph는 byline으로 닫혔음)
+      2. 본문 임베딩/매칭 시 noise가 되는 byline 텍스트 제거
+
+    기록자가 누구인지는 식별하지 않는다. raw 보존만 한다.
+
+    매칭 조건: 끝에 붙은 () + 안쪽이 8자 이하 + 슬래시 포함
+    (章節 안내 「以下五常」 등 false positive가 일부 섞일 수 있으나,
+     본문 정제 측면에서는 어차피 빼는 편이 안전하므로 무시)
+    """
+    m = re.search(r"\(([^()]{1,80})\)\s*$", text)
+    if not m:
+        return text, None
+    inner = m.group(1)
+    if "/" not in inner or len(inner) > BYLINE_MAX_LEN:
+        return text, None
+    cleaned = text[: m.start()].rstrip()
+    return cleaned, {"raw": m.group(0)}
 
 # 표지 텍스트 (문단/제목 모두 아닌 것)
 COVER_PATTERNS = [
@@ -146,29 +193,38 @@ def parse_file(path: Path) -> list[dict]:
     # 현재 섹션 상태
     juan_label = ""
     headings: list[dict] = []
-    paragraphs: list[str] = []
+    paragraphs_raw: list[str] = []      # byline 그대로 포함된 원문
     current_para: list[str] = []
 
     def flush_para() -> None:
         if current_para:
-            paragraphs.append("".join(current_para))
+            paragraphs_raw.append("".join(current_para))
             current_para.clear()
 
     def flush_section() -> None:
         """현재 섹션을 레코드로 확정하고 상태 초기화."""
-        nonlocal headings, paragraphs
+        nonlocal headings, paragraphs_raw
         flush_para()
-        if juan_label:  # 라벨이 있어야 저장
+        if juan_label:
+            # paragraphs_raw → (paragraphs 본문, paragraphs_byline) 분리
+            paragraphs: list[str] = []
+            paragraphs_byline: list[dict | None] = []
+            for raw_para in paragraphs_raw:
+                cleaned, meta = extract_trailing_byline(raw_para)
+                paragraphs.append(cleaned)
+                paragraphs_byline.append(meta)
             records.append({
                 "juan_num": parse_juan_num(juan_label),
                 "juan_label": juan_label,
                 "file_name": path.name,
                 "headings": headings,
                 "paragraphs": paragraphs,
+                "paragraphs_raw": paragraphs_raw,
+                "paragraphs_byline": paragraphs_byline,
                 "raw_concat": "".join(paragraphs),
             })
         headings = []
-        paragraphs = []
+        paragraphs_raw = []
 
     for raw in lines:
         # 1. 헤더 라인 처리
@@ -242,6 +298,7 @@ def main() -> None:
     records: list[dict] = []
     total_paragraphs = 0
     total_chars = 0
+    total_with_byline = 0
 
     for path in files:
         file_records = parse_file(path)
@@ -249,6 +306,9 @@ def main() -> None:
             records.append(rec)
             total_paragraphs += len(rec["paragraphs"])
             total_chars += len(rec["raw_concat"])
+            for bl in rec["paragraphs_byline"]:
+                if bl is not None:
+                    total_with_byline += 1
 
     # JSONL 저장
     with OUT_PATH.open("w", encoding="utf-8") as f:
@@ -260,7 +320,9 @@ def main() -> None:
     print(f"       파일 수:   {len(files)}")
     print(f"       레코드 수: {len(records)}  (000 파일은 4섹션으로 분리)")
     print(f"       문단 수:   {total_paragraphs:,}")
-    print(f"       총 글자:   {total_chars:,}")
+    print(f"       총 글자:   {total_chars:,} (byline 제거 후)")
+    print(f"       byline 분리 문단: {total_with_byline:,} "
+          f"({total_with_byline / max(1, total_paragraphs) * 100:.1f}%)")
 
     # 샘플 출력
     # 卷一 레코드 찾기
