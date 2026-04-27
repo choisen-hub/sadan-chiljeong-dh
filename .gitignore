@@ -1,67 +1,12 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv/
-venv/
-env/
-.python-version
+*.pyc
 
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
-*.egg
+# Source ZIPs (공공데이터포털에서 재다운, 용량 큼)
+data/raw/munjip/*.zip
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Data - 원본과 중간 산출물은 git 제외 (용량 큼, 재현 가능)
-data/raw/
-data/intermediate/
-*.jsonl
-
-# 최종 산출물은 커밋 (data/final/ 아래 xlsx, csv 등은 추적)
-!data/final/
-
-# 로그
-*.log
-logs/
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# 환경 변수
-.env
-.env.local
-
-# 사단칠정 corpus pipeline derived data
+# Derived data (regenerable from 11/12번)
 data/raw/letters.jsonl
 data/processed/
 
-# 한국문집총간 source ZIPs (공공데이터포털에서 재다운로드 가능, 용량 큼)
-data/raw/munjip/*.zip
-
-# Derived data — regenerable from 11/12번 (corpus_review.xlsx만 추적)
-data/raw/letters.jsonl
-data/processed/letter_index.csv
-data/processed/sentences.jsonl
-data/processed/sentences.csv
-
-# Source ZIPs (공공데이터포털에서 재다운 가능, 용량 큼)
-data/raw/munjip/*.zip
+# data/final/ 은 추적함 (curated deliverables)

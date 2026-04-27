@@ -12,6 +12,10 @@ Step 13 of Phase 0 pipeline. Builds a single Excel file with 3 sheets:
 용도: 김바로 교수님께 review용으로 보내거나, 황준연 표 1과 22편 매핑할 때
 스프레드시트에서 정렬·필터로 letter 빠르게 식별하는 용도.
 
+Output 위치: data/final/corpus_review.xlsx
+  ※ data/raw/ (원본), data/processed/ (중간 산출물)와 달리 data/final/ 은
+    GitHub 에 추적되는 deliverable 폴더이다.
+
 
 USAGE
 =====
@@ -270,7 +274,7 @@ def main() -> None:
                     help="Override sentences.jsonl path")
     ap.add_argument("--output", type=Path, default=None,
                     help="Override output xlsx path "
-                         "(default: <repo>/data/processed/corpus_review.xlsx)")
+                         "(default: <repo>/data/final/corpus_review.xlsx)")
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args()
 
@@ -282,7 +286,7 @@ def main() -> None:
     repo_root = args.repo_root.resolve()
     letters_path = args.letters or (repo_root / "data/raw/letters.jsonl")
     sentences_path = args.sentences or (repo_root / "data/processed/sentences.jsonl")
-    out_path = args.output or (repo_root / "data/processed/corpus_review.xlsx")
+    out_path = args.output or (repo_root / "data/final/corpus_review.xlsx")
 
     letters = _load_jsonl(letters_path)
     sentences = _load_jsonl(sentences_path)
