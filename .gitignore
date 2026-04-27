@@ -56,3 +56,12 @@ data/processed/
 
 # 한국문집총간 source ZIPs (공공데이터포털에서 재다운로드 가능, 용량 큼)
 data/raw/munjip/*.zip
+
+# Derived data — regenerable from 11/12번 (corpus_review.xlsx만 추적)
+data/raw/letters.jsonl
+data/processed/letter_index.csv
+data/processed/sentences.jsonl
+data/processed/sentences.csv
+
+# Source ZIPs (공공데이터포털에서 재다운 가능, 용량 큼)
+data/raw/munjip/*.zip
