@@ -1,0 +1,35 @@
+# Letter extraction targets for 11_crawl_itkc.py
+#
+# 각 target은 (문집, 권, 제목 패턴) 으로 letter group을 정의한다.
+# title_pattern은 정규식이며, <제목> 의 텍스트 (원주 제외)에 매칭된다.
+#
+# 제목 패턴 주의:
+#   - 답기명언 letter는 첫 통이 "與奇明彦"로 시작 (與=먼저 보낸 letter)
+#   - 권17에는 "重答奇明彦"(다시 답함)도 있어 중요 패턴이 될 수 있음
+#   - 따라서 [與答重]奇明彦 패턴이 必要
+
+toegye_gobong_22pyeon:
+  munjip: toegye
+  kwon: [16, 17]
+  title_pattern: "明彦"
+  label: T
+  description: >
+    퇴계선생문집 권16+권17 명언(고봉) 관련 letters (총 22편).
+    답기명언/여기명언/중답기명언 외에도 권17 _0130 「答友人論學書。今奉寄明彦」
+    까지 모두 포함하면 정확히 22편. 황준연(2009) 표 1의 12편 corpus의 superset.
+    최종 분석 corpus(퇴계 발신 7편: 황준연 표 번호 1, 3, 5, 7, 9, 10, 12)는
+    후속 단계(14_filter_corpus.py)에서 황준연 표 mapping table에 따라 filter.
+
+yulgok_ugye_9pyeon:
+  munjip: yulgok
+  kwon: [11]
+  title_pattern: "[答與]成浩原"
+  label: Y
+  description: >
+    율곡선생전서 권11 답/여 성호원 letters (9편).
+    1572년(壬申) 사단칠정 논변 본체 corpus (21,090자).
+    한국민족문화대백과사전 「율곡전서」 항목의 "권10 답성호원 9편"은 부정확.
+    실제 한국문집총간本 율곡전서 편제는:
+      권10 답성호원 8편 (1554~1572 산재) — 논변 이전 + 시작 시점 일부
+      권11 답성호원 9편 (1572 壬申) — 논변 본체  ← 본 corpus
+      권12 답성호원 11편 (1573 이후) — 논변 후속

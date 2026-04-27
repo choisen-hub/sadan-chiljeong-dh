@@ -1,0 +1,67 @@
+[
+  {
+    "name": "sample1",
+    "juan": "卷一百一",
+    "topic": "性情論 (張載 논평)",
+    "kanripo_i1": 16432,
+    "kanripo_i2": 17310,
+    "zhuzi_j1": 16422,
+    "zhuzi_j2": 17300,
+    "kanripo_plain_len": 878,
+    "zhuzi_plain_len": 878,
+    "zhuzi_raw_len": 880,
+    "length_equal": true
+  },
+  {
+    "name": "sample2",
+    "juan": "卷十六",
+    "topic": "中庸 慎獨",
+    "kanripo_i1": 13142,
+    "kanripo_i2": 13997,
+    "zhuzi_j1": 13184,
+    "zhuzi_j2": 14039,
+    "kanripo_plain_len": 855,
+    "zhuzi_plain_len": 855,
+    "zhuzi_raw_len": 855,
+    "length_equal": true
+  },
+  {
+    "name": "sample3",
+    "juan": "卷九十九",
+    "topic": "陰陽 天氣地氣",
+    "kanripo_i1": 1742,
+    "kanripo_i2": 2578,
+    "zhuzi_j1": 1741,
+    "zhuzi_j2": 2577,
+    "kanripo_plain_len": 836,
+    "zhuzi_plain_len": 836,
+    "zhuzi_raw_len": 840,
+    "length_equal": true
+  },
+  {
+    "name": "sample4",
+    "juan": "卷四十三",
+    "topic": "論語·春秋",
+    "kanripo_i1": 1590,
+    "kanripo_i2": 2357,
+    "zhuzi_j1": 1589,
+    "zhuzi_j2": 2356,
+    "kanripo_plain_len": 767,
+    "zhuzi_plain_len": 767,
+    "zhuzi_raw_len": 767,
+    "length_equal": true
+  },
+  {
+    "name": "sample5",
+    "juan": "卷九十八",
+    "topic": "中庸 父母之命",
+    "kanripo_i1": 7811,
+    "kanripo_i2": 8543,
+    "zhuzi_j1": 7807,
+    "zhuzi_j2": 8539,
+    "kanripo_plain_len": 732,
+    "zhuzi_plain_len": 732,
+    "zhuzi_raw_len": 732,
+    "length_equal": true
+  }
+]
