@@ -49,3 +49,10 @@ logs/
 # 환경 변수
 .env
 .env.local
+
+# 사단칠정 corpus pipeline derived data
+data/raw/letters.jsonl
+data/processed/
+
+# 한국문집총간 source ZIPs (공공데이터포털에서 재다운로드 가능, 용량 큼)
+data/raw/munjip/*.zip
