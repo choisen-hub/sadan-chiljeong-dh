@@ -236,24 +236,31 @@ def parse_file(path: Path) -> list[dict]:
                 juan_label = m.group(1)
             continue
 
-        # 2. 페이지 태그, 행 구분자 제거
-        cleaned = RE_PB.sub("", raw).replace("¶", "").rstrip()
-
-        # 3. 빈 줄 → 문단 경계
-        if not cleaned:
+        # 2. 진짜 빈 줄 → paragraph 경계 (페이지 태그/¶ 처리 전에 판별)
+        #    원본에 비어있던 줄이 paragraph break. 페이지 태그만 있던 줄은
+        #    인쇄 메타데이터일 뿐이므로 paragraph 끊지 않고 통과.
+        if not raw.strip():
             flush_para()
             continue
 
-        # 4. 들여쓰기 카운트
+        # 3. 페이지 태그, 행 구분자 제거
+        cleaned = RE_PB.sub("", raw).replace("¶", "").rstrip()
+
+        # 4. 페이지 태그/¶ 제거 후 빈 줄이 됐다면 → 본문 컨텐츠 없음, 그냥 무시.
+        #    (paragraph 경계가 아님. 한 paragraph 중간에 페이지 넘어가는 경우)
+        if not cleaned:
+            continue
+
+        # 5. 들여쓰기 카운트
         indent = count_leading_fw_spaces(cleaned)
         content = cleaned[indent:]
 
-        # 5. 표지 라인 제거
+        # 6. 표지 라인 제거
         if is_cover_line(content):
             flush_para()
             continue
 
-        # 6. 구조 판별
+        # 7. 구조 판별
         if indent == 0:
             flush_para()
             current_para.append(content)
