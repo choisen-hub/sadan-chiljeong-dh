@@ -20,3 +20,12 @@ v1 파이프라인 잔재. v2부터 hanja.dev 일괄적용으로 전환되면서
 `data/processed/` 의 `alignment_summary.csv`, `zhuzi_mismatch_*.csv` 등 v1 검증 산출물은 GitHub 히스토리에 그대로 남겨둔다. v1 단계에서 칸리포·祝平次 판본 일치율 검증을 거쳤다는 흔적은 재현성 측면에서 가치가 있다.
 
 자세한 변경 사유는 [`docs/판본정보.md`](../docs/판본정보.md) 의 변경 이력 참조.
+
+## 개발 잔재 (v2 도입 검증용)
+
+| 파일 | 용도 | 비고 |
+|---|---|---|
+| `sanity_check_hanja.py` | 권1/127/130 문체별 표점 품질 비교 | 김바로 교수님 미팅 검증 자료 |
+| `test_hanja_local.py` | 모델 로딩 패턴 발견용 minimal example | `common/punctuate_hanja.py` 의 `_load_model()` 원형 |
+
+이 두 파일은 검증 과정의 흔적으로 보존. 검증된 로직은 `common/punctuate_hanja.py` 에 정식 통합.
