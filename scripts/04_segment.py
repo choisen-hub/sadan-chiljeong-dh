@@ -28,7 +28,8 @@
 
 스키마 (한 줄에 한 sentence):
   {
-    "sentence_id":      "S000001",                # 전역 순번 (분석 식별자)
+    "sentence_id":      "Z000001",                # 전역 순번 (Z prefix = 주자어류)
+    "source_id":        "卷一#p001#s3",           # 합성 출처 ID (권+단락+문장)
     "juan_num":         1,
     "juan_label":       "卷一",
     "headings":         [...],                    # 권/편/절 헤더
@@ -144,14 +145,16 @@ def main() -> None:
                     continue
                 sent_idx += 1
                 sent_seq += 1
+                utterance_id = f"{juan_label}#p{p_idx:03d}"
                 sentences.append({
-                    "sentence_id": f"S{sent_seq:06d}",
+                    "sentence_id": f"Z{sent_seq:06d}",
+                    "source_id": f"{utterance_id}#s{sent_idx}",
                     "juan_num": juan_num,
                     "juan_label": juan_label,
                     "headings": headings,
                     "paragraph_idx": p_idx,
                     "sentence_idx": sent_idx,
-                    "utterance_id": f"{juan_label}#p{p_idx:03d}",
+                    "utterance_id": utterance_id,
                     "text_punctuated": s,
                     "text_plain": plain,
                     "char_count": len(plain),

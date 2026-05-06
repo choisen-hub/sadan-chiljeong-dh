@@ -38,6 +38,7 @@ OUT = PROJECT_ROOT / "data" / "final" / "zhuzi_sentences.xlsx"
 # 분석 시 자주 쓰는 순서로 컬럼 정렬
 COLUMNS = [
     "sentence_id",
+    "source_id",
     "juan_num", "juan_label",
     "paragraph_idx", "sentence_idx", "utterance_id",
     "text_punctuated", "text_plain",
@@ -49,6 +50,7 @@ COLUMNS = [
 # 컬럼별 너비 (Excel 단위)
 COL_WIDTHS = {
     "sentence_id":     12,
+    "source_id":       18,
     "juan_num":         8,
     "juan_label":      12,
     "paragraph_idx":   10,

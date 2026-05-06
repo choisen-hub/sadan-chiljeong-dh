@@ -1,26 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-14_export_letters_xlsx.py — Export letters + sentences to xlsx for review.
+15_export_letters_xlsx.py — Export letters + sentences to xlsx for review.
 
-Step 14 of Phase 0 pipeline. Builds a single Excel file with 3 sheets:
+Step 15 of Phase 0 pipeline. Builds a single Excel file with 3 sheets:
 
-  Summary    corpus 통계 (target별·권별 letter 수, 자수, 문장 수)
+  Summary    corpus 통계 + 理/氣 분포 (퇴계 vs 율곡 대비)
   Letters    31편 letter list (raw_text + punctuated_text 모두 포함)
-  Sentences  분절 결과 문장들 (autofilter, freeze header)
+  Sentences  분절 + annotate 결과 문장들 (has_li/has_qi 컬럼 포함)
 
-이전 13_export_xlsx.py 와의 차이:
-  - Letter source: letters.jsonl → letters_punctuated.jsonl
-    (hanja.dev 표점 결과 review 가능)
-  - Sentence source: 13_segment_letters.py 출력 (hanja.dev 기반 분절)
-  - Letters sheet 에 punctuated 자수, punctuated 첫 50자 컬럼 추가
-  - 파일명에 _letters_ 명시 — 주자어류 export(08_export_xlsx.py) 와 구별
-
+이전 14_export_letters_xlsx.py (v2.0) 와의 차이:
+  - 입력: sentences.jsonl → sentences_annotated.jsonl (14_annotate_letters.py 산출)
+  - Sentences sheet 에 has_li / has_qi / li_qi_category 컬럼 추가
+  - Summary sheet 에 理/氣 카테고리 분포 (퇴계/율곡 분리) 추가
 
 USAGE
 =====
 
-  python3 scripts/14_export_letters_xlsx.py
+  python3 scripts/15_export_letters_xlsx.py
 
 
 OUTPUT
@@ -131,8 +128,13 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
     for s in sentences:
         sents_by_target[s["target_name"]] += 1
 
+    # target 별 理/氣 카테고리 분포 집계
+    cat_by_target: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for s in sentences:
+        cat_by_target[s["target_name"]][s.get("li_qi_category", "neither")] += 1
+
     # Title
-    ws["A1"] = "사단칠정 corpus — Phase 0 추출 결과 (hanja.dev 표점)"
+    ws["A1"] = "사단칠정 corpus — Phase 0 추출 결과 (hanja.dev 표점 + 理/氣 annotate)"
     ws["A1"].font = TITLE_FONT
     ws.merge_cells("A1:F1")
 
@@ -186,6 +188,29 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
         ws.cell(row=row, column=6, value=sents_by_target[target]).font = HEADER_FONT
         row += 2
 
+    # 理/氣 카테고리 분포 (퇴계 vs 율곡 대비)
+    row += 1
+    ws.cell(row=row, column=1, value="理/氣 카테고리 분포 (target별)").font = HEADER_FONT
+    row += 1
+    cat_headers = ["Target", "category", "문장 수", "비율 (%)"]
+    for c, h in enumerate(cat_headers, start=1):
+        ws.cell(row=row, column=c, value=h)
+    _style_header_row(ws, row, len(cat_headers))
+    row += 1
+
+    for target in sorted(cat_by_target.keys()):
+        cnt = cat_by_target[target]
+        sub_total = sum(cnt.values())
+        for k in ["both", "li_only", "qi_only", "neither"]:
+            n = cnt.get(k, 0)
+            ws.cell(row=row, column=1, value=target)
+            ws.cell(row=row, column=2, value=k)
+            ws.cell(row=row, column=3, value=n)
+            ws.cell(row=row, column=4,
+                    value=round(n / max(sub_total, 1) * 100, 1))
+            row += 1
+        row += 1
+
     # Notes
     row += 1
     ws.cell(row=row, column=1, value="참고").font = HEADER_FONT
@@ -196,6 +221,7 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
         "• 율곡 측 9편 = 권11 답성호원 letters (1572 壬申, 사단칠정 논변 본체)",
         "• 표점 부여: SikuRoBERTa-PUNC-AJD-KLC (한국고전번역원 AJD/KLC 표점 시스템)",
         "• 분절 기준: hanja.dev 출력의 종결자 (。？！?!) — 한 letter = 1 paragraph",
+        "• 理/氣 annotate: sent_text_plain (백문) 기준, 표점에 우연히 동일 글자가 있어도 영향 없음",
         "• 자세한 판본 정보: docs/판본정보.md",
         "• 모델 호출 메타데이터: docs/letter_punctuation_provenance.md",
     ]
@@ -247,9 +273,10 @@ def build_sentences_sheet(ws, sentences: list[dict]) -> None:
     ws.title = "Sentences"
 
     headers = [
-        "sentence_id", "letter_id", "권", "letter_year", "발신측",
+        "sentence_id", "source_id", "letter_id", "권", "letter_year", "발신측",
         "para", "sent#para", "sent#letter",
-        "백문 자수", "원문 (표점)", "백문",
+        "백문 자수", "has_li", "has_qi", "li_qi_category",
+        "원문 (표점)", "백문",
     ]
     ws.append(headers)
     _style_header_row(ws, 1, len(headers))
@@ -257,6 +284,7 @@ def build_sentences_sheet(ws, sentences: list[dict]) -> None:
     for s in sentences:
         ws.append([
             s["sentence_id"],
+            s.get("source_id", ""),
             s["letter_data_id"],
             s["kwon"],
             s["letter_year"] or "",
@@ -265,11 +293,14 @@ def build_sentences_sheet(ws, sentences: list[dict]) -> None:
             s["sent_idx_in_para"],
             s["sent_idx_in_letter"],
             s["char_count_plain"],
+            s.get("has_li", False),
+            s.get("has_qi", False),
+            s.get("li_qi_category", ""),
             s["sent_text"],
             s["sent_text_plain"],
         ])
 
-    _set_col_widths(ws, [42, 32, 5, 10, 8, 6, 8, 9, 10, 60, 60])
+    _set_col_widths(ws, [10, 36, 32, 5, 10, 8, 6, 8, 9, 10, 8, 8, 13, 60, 60])
     ws.freeze_panes = "A2"
     ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}{ws.max_row}"
 
@@ -299,7 +330,7 @@ def main() -> None:
 
     repo_root = args.repo_root.resolve()
     letters_path = args.letters or (repo_root / "data/processed/letters_punctuated.jsonl")
-    sentences_path = args.sentences or (repo_root / "data/processed/sentences.jsonl")
+    sentences_path = args.sentences or (repo_root / "data/processed/sentences_annotated.jsonl")
     out_path = args.output or (repo_root / "data/final/corpus_review.xlsx")
 
     letters = _load_jsonl(letters_path)

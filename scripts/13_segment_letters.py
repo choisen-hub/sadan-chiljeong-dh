@@ -35,7 +35,8 @@ OUTPUTS
 SCHEMA (출력 jsonl 한 줄)
 =========================
 
-  sentence_id          {letter_data_id}_p1_s{idx}
+  sentence_id          T0001 (퇴계) 또는 Y0001 (율곡), sender_label 별 전역 순번
+  source_id            {letter_data_id}_p1_s{idx}  (합성 출처 ID)
   letter_data_id       원본 letter id
   munjip               toegye / yulgok
   kwon                 권 number
@@ -104,6 +105,7 @@ _PUNCT_PATTERN = re.compile(
 @dataclass
 class Sentence:
     sentence_id: str
+    source_id: str
     letter_data_id: str
     munjip: str
     kwon: int
@@ -152,7 +154,11 @@ def _split_text(text: str) -> list[str]:
 
 
 def segment_letter(letter: dict) -> list[Sentence]:
-    """letter dict (from letters_punctuated.jsonl) → list of Sentence."""
+    """letter dict (from letters_punctuated.jsonl) → list of Sentence.
+
+    sentence_id 는 letter 단위 함수에서 전역 순번 부여 불가 → 빈 문자열로 두고
+    main() 에서 sender_label 별로 'T0001' / 'Y0001' 형식 일괄 할당.
+    """
     text = letter.get("punctuated_text", "")
     sentences_text = _split_text(text)
 
@@ -160,7 +166,8 @@ def segment_letter(letter: dict) -> list[Sentence]:
     for idx, sent in enumerate(sentences_text, start=1):
         sent_plain = _strip_punct(sent)
         out.append(Sentence(
-            sentence_id=f"{letter['data_id']}_p1_s{idx}",
+            sentence_id="",  # main() 에서 전역 순번 부여
+            source_id=f"{letter['data_id']}_p1_s{idx}",
             letter_data_id=letter["data_id"],
             munjip=letter["munjip"],
             kwon=letter["kwon"],
@@ -195,7 +202,7 @@ def write_jsonl(sentences: list[Sentence], path: Path) -> None:
 def write_csv(sentences: list[Sentence], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
-        "sentence_id", "letter_data_id", "munjip", "kwon",
+        "sentence_id", "source_id", "letter_data_id", "munjip", "kwon",
         "letter_seq", "letter_title", "letter_year", "sender_label",
         "target_name", "para_idx", "sent_idx_in_para", "sent_idx_in_letter",
         "char_count_raw", "char_count_plain",
@@ -295,6 +302,16 @@ def main() -> None:
         sents = segment_letter(L)
         all_sents.extend(sents)
         logging.debug("  %s — %d sentences", L["data_id"], len(sents))
+
+    # 전역 순번 sentence_id 부여 — sender_label 별로 카운터 분리
+    #   퇴계 (T): T0001 ~ T{퇴계 sentence 수}
+    #   율곡 (Y): Y0001 ~ Y{율곡 sentence 수}
+    # 4자리 zero-padding: 각 corpus 모두 ~2,000개 미만 규모이므로 충분
+    counters: dict[str, int] = {}
+    for s in all_sents:
+        prefix = s.sender_label or "L"  # fallback: 라벨 없으면 L
+        counters[prefix] = counters.get(prefix, 0) + 1
+        s.sentence_id = f"{prefix}{counters[prefix]:04d}"
 
     summarize(all_sents)
 
