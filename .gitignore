@@ -10,3 +10,16 @@ data/raw/letters.jsonl
 data/processed/
 
 # data/final/ 은 추적함 (curated deliverables)
+
+# macOS
+.DS_Store
+
+# 모델 캐시 (HuggingFace + 자체 캐시)
+.cache/
+
+# 엑셀 임시파일 (열려있을 때 생기는 lock file)
+~$*.xlsx
+
+# 큰 raw 데이터 (regenerable)
+data/raw/
+data/intermediate/
