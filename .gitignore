@@ -24,3 +24,18 @@ data/processed/
 data/raw/
 data/intermediate/
 transcripts/
+
+# archive 백업 — 큰 임베딩과 대조군 클러스터링은 제외 (재생성 가능)
+archive/**/li_token_embeddings.npy
+archive/**/clusters/天_clusters.parquet
+archive/**/clusters/心_clusters.parquet
+archive/**/clusters/性_clusters.parquet
+archive/**/clusters/理_clusters.parquet
+
+# archive 백업 — 큰 임베딩과 대조군 클러스터링은 제외 (재생성 가능)
+archive/**/li_token_embeddings.npy
+archive/**/clusters/天_clusters.parquet
+archive/**/clusters/心_clusters.parquet
+archive/**/clusters/性_clusters.parquet
+archive/**/clusters/理_clusters.parquet
+archive/

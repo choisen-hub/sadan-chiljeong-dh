@@ -1,0 +1,220 @@
+"""
+22_embed_li_sentences.py (v2 - TOKEN EMBEDDING)
+
+변경 사유:
+  기존 (문장 임베딩 + CLS pooling) → silhouette 0.058, 명사/동사 표면 패턴만 잡음
+  신규 (理 토큰 위치의 contextualized hidden state) → WSI 표준 접근
+
+입력:
+  data/processed/li_sentences.jsonl  (또는 data/final/zhuzi_sentences.xlsx의 li_sentences 시트)
+  - 컬럼: sentence_id, sent_text, sent_text_plain (백문)
+  - 8,443 문장
+
+출력:
+  data/processed/li_token_embeddings.npy       (N, 768)  float32  N ≈ 10,000
+  data/processed/li_token_mapping.parquet      token_id, sentence_id, li_idx_in_sent,
+                                                token_pos, char_left, char_right
+"""
+
+import os
+from pathlib import Path
+from typing import List, Dict, Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from tqdm import tqdm
+from transformers import AutoTokenizer, AutoModel
+
+# ============================================================
+# 설정
+# ============================================================
+PROJECT_ROOT = Path("/Users/vairocana/projects/sadan-chiljeong-dh")
+INPUT_PATH = PROJECT_ROOT / "data" / "final" / "zhuzi_sentences.xlsx"
+# 대안: INPUT_PATH = PROJECT_ROOT / "data" / "final" / "zhuzi_sentences.xlsx"
+
+OUTPUT_DIR = PROJECT_ROOT / "data" / "processed"
+OUTPUT_VECTORS = OUTPUT_DIR / "li_token_embeddings.npy"
+OUTPUT_MAPPING = OUTPUT_DIR / "li_token_mapping.parquet"
+
+MODEL_NAME = "SIKU-BERT/sikubert"
+TARGET_CHAR = "理"
+MAX_LENGTH = 512                # SikuBERT 한계
+CONTEXT_WINDOW = 10             # char_left/right에 ±N자 저장 (해석 시 빠른 참고)
+DEVICE = "mps" if torch.backends.mps.is_available() else \
+         ("cuda" if torch.cuda.is_available() else "cpu")
+BATCH_SIZE = 16
+
+# 입력 컬럼 (본인 데이터 컨벤션 확인 후 조정)
+COL_SENT_ID = "sentence_id"
+COL_TEXT = "text_plain"    # 백문 (표점 제거) 권장. 또는 "sent_text"
+
+
+# ============================================================
+# 로드
+# ============================================================
+def load_sentences() -> pd.DataFrame:
+    """input 경로의 확장자 보고 자동 분기"""
+    p = INPUT_PATH
+    if p.suffix == ".jsonl":
+        df = pd.read_json(p, lines=True)
+    elif p.suffix == ".xlsx":
+        df = pd.read_excel(p, sheet_name="li_sentences")
+    elif p.suffix == ".csv":
+        df = pd.read_csv(p)
+    else:
+        raise ValueError(f"Unsupported: {p.suffix}")
+    print(f"Loaded {len(df):,} sentences from {p.name}")
+    print(f"Columns: {list(df.columns)}")
+    return df
+
+
+# ============================================================
+# 토큰 임베딩 추출
+# ============================================================
+def extract_li_embeddings_batch(
+    sentences: List[str],
+    sentence_ids: List[str],
+    tokenizer,
+    model,
+    li_token_id: int,
+) -> tuple:
+    """
+    한 배치의 문장들로부터 理 위치의 hidden state 추출.
+
+    Returns:
+        vectors: (k, hidden_dim) numpy  k = 배치 내 理 출현 총합
+        records: List[Dict]  매핑 정보
+    """
+    # Tokenize (배치 처리, padding)
+    enc = tokenizer(
+        sentences,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=MAX_LENGTH,
+        return_offsets_mapping=True,
+    )
+    input_ids = enc["input_ids"].to(DEVICE)
+    attention_mask = enc["attention_mask"].to(DEVICE)
+    offsets = enc["offset_mapping"]  # CPU에 유지 (slicing용)
+
+    # Forward
+    with torch.no_grad():
+        out = model(input_ids=input_ids, attention_mask=attention_mask)
+    hidden = out.last_hidden_state  # (B, T, H)
+
+    vectors = []
+    records = []
+    truncated_count = 0
+
+    for b_idx, sent_id in enumerate(sentence_ids):
+        orig_text = sentences[b_idx]
+        seq_ids = input_ids[b_idx]
+        seq_offsets = offsets[b_idx].tolist()
+
+        # 마스크 영역의 理 위치
+        li_positions = (seq_ids == li_token_id).nonzero(as_tuple=True)[0].tolist()
+
+        # 원문 내 理 글자 수와 비교 → truncation 감지
+        orig_li_count = orig_text.count(TARGET_CHAR)
+        if len(li_positions) < orig_li_count:
+            truncated_count += 1
+
+        for li_idx_in_sent, tok_pos in enumerate(li_positions):
+            vec = hidden[b_idx, tok_pos].cpu().numpy().astype(np.float32)
+            vectors.append(vec)
+
+            # 원문 char offset (해석용 context)
+            start, end = seq_offsets[tok_pos]
+            char_left = orig_text[max(0, start - CONTEXT_WINDOW):start]
+            char_right = orig_text[end:end + CONTEXT_WINDOW]
+
+            records.append({
+                "token_id": f"{sent_id}_li{li_idx_in_sent + 1}",
+                "sentence_id": sent_id,
+                "li_idx_in_sent": li_idx_in_sent + 1,
+                "token_pos": int(tok_pos),
+                "char_pos_in_sent": int(start),
+                "char_left": char_left,
+                "char_right": char_right,
+            })
+
+    return vectors, records, truncated_count
+
+
+# ============================================================
+# 메인
+# ============================================================
+def main():
+    print(f"\n=== Token Embedding Extraction ===")
+    print(f"Model:   {MODEL_NAME}")
+    print(f"Device:  {DEVICE}")
+    print(f"Target:  '{TARGET_CHAR}'\n")
+
+    # 1. Load
+    df = load_sentences()
+    if COL_TEXT not in df.columns:
+        raise KeyError(f"Column '{COL_TEXT}' not found. Available: {list(df.columns)}")
+
+    # 2. Model
+    print("Loading tokenizer and model...")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModel.from_pretrained(MODEL_NAME).to(DEVICE)
+    model.eval()
+
+    li_token_id = tokenizer.convert_tokens_to_ids(TARGET_CHAR)
+    assert li_token_id != tokenizer.unk_token_id, f"{TARGET_CHAR} is UNK!"
+    print(f"  {TARGET_CHAR} token_id = {li_token_id}\n")
+
+    # 3. 배치 단위로 임베딩 추출
+    all_vectors = []
+    all_records = []
+    total_truncated = 0
+
+    sentences = df[COL_TEXT].tolist()
+    sentence_ids = df[COL_SENT_ID].tolist()
+
+    for start in tqdm(range(0, len(sentences), BATCH_SIZE), desc="Embedding"):
+        end = min(start + BATCH_SIZE, len(sentences))
+        batch_sents = sentences[start:end]
+        batch_ids = sentence_ids[start:end]
+
+        vecs, recs, trunc = extract_li_embeddings_batch(
+            batch_sents, batch_ids, tokenizer, model, li_token_id
+        )
+        all_vectors.extend(vecs)
+        all_records.extend(recs)
+        total_truncated += trunc
+
+    # 4. 저장
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    vectors_arr = np.stack(all_vectors)  # (N, 768)
+    np.save(OUTPUT_VECTORS, vectors_arr)
+
+    mapping_df = pd.DataFrame(all_records)
+    mapping_df.to_parquet(OUTPUT_MAPPING, index=False)
+
+    # 5. 요약
+    print("\n" + "=" * 60)
+    print("DONE")
+    print(f"  Total 理 tokens:      {len(all_records):,}")
+    print(f"  Vector shape:          {vectors_arr.shape}")
+    print(f"  Sentences w/ truncation: {total_truncated}")
+    print(f"\n  Saved:")
+    print(f"    {OUTPUT_VECTORS}")
+    print(f"    {OUTPUT_MAPPING}")
+    print("=" * 60)
+
+    # 분포 확인
+    per_sent = mapping_df.groupby("sentence_id").size()
+    print(f"\n문장당 理 출현 빈도:")
+    print(f"  단일 理 문장:  {(per_sent == 1).sum():,}")
+    print(f"  2회 이상:       {(per_sent >= 2).sum():,}")
+    print(f"  최대 출현:     {per_sent.max()} (문장 ID: {per_sent.idxmax()})")
+    print(f"  평균:          {per_sent.mean():.2f}")
+
+
+if __name__ == "__main__":
+    main()

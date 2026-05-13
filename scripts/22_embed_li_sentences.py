@@ -1,250 +1,165 @@
 """
-22_embed_li_sentences.py
-=========================
+22_embed_li_sentences.py (v3 - MID-LAYER TOKEN EMBEDDING)
 
-Phase 1 Step 1·3 준비: 주자어류 sentence를 SikuBERT로 임베딩.
+변경 사유 (v2 → v3):
+  v2 (last layer hidden state) → silhouette 0.85, 클러스터 실체는 道理/天理/理會
+  같은 bigram surface form. BERT의 last layer는 인접 토큰에 과도하게 편향됨.
+  Mid-layer는 semantic 정보를 더 잘 담는 것으로 알려짐.
 
-대상:
-- 理 포함 문장 (Step 1 메인, ~8,443개)
-- 心/性/天 포함 문장 (Step 3 대조군)
+LAYER 상수만 바꿔서 다른 layer로도 재실험 가능 (6, 9, 12 비교 가능).
 
-산출:
-- data/processed/phase1/embeddings/{char}_embeddings.parquet
-  컬럼: sentence_id, sent_text_plain, has_li/has_qi/li_qi_category(있으면), embedding(768-dim)
+입력:
+  data/final/zhuzi_sentences.xlsx (li_sentences 시트)
 
-설계 결정 (2026-05-06 합의):
-- mean pooling (last hidden layer) — [CLS] 아님
-- 길이 필터: 3자 미만 제외 (default, --min_char_count로 조정)
-- max_length=64 (평균 22자 기준 충분)
-- 디바이스: CUDA > MPS(Apple Silicon) > CPU 자동 선택
-
-사용법:
-    python scripts/22_embed_li_sentences.py
-    python scripts/22_embed_li_sentences.py --batch_size 16 --min_char_count 5
+출력:
+  data/processed/li_token_embeddings.npy       (10474, 768)
+  data/processed/li_token_mapping.parquet
 """
 
-from __future__ import annotations
-
-import argparse
-import logging
 from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import torch
-from tqdm.auto import tqdm
-from transformers import AutoModel, AutoTokenizer
+from tqdm import tqdm
+from transformers import AutoTokenizer, AutoModel
 
-# ---------------------------------------------------------------------------
-TARGET_CHARS = ["理", "心", "性", "天"]  # 메인 + 대조군
-SIKUBERT_MODEL = "SIKU-BERT/sikubert"
-DEFAULT_BATCH_SIZE = 32
-DEFAULT_MAX_LENGTH = 64
-MIN_CHAR_COUNT = 3
-# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path("/Users/vairocana/projects/sadan-chiljeong-dh")
+INPUT_PATH = PROJECT_ROOT / "data" / "final" / "zhuzi_sentences.xlsx"
+OUTPUT_DIR = PROJECT_ROOT / "data" / "processed"
+OUTPUT_VECTORS = OUTPUT_DIR / "li_token_embeddings.npy"
+OUTPUT_MAPPING = OUTPUT_DIR / "li_token_mapping.parquet"
 
+MODEL_NAME = "SIKU-BERT/sikubert"
+TARGET_CHAR = "理"
+MAX_LENGTH = 512
+CONTEXT_WINDOW = 10
+DEVICE = "mps" if torch.backends.mps.is_available() else \
+         ("cuda" if torch.cuda.is_available() else "cpu")
+BATCH_SIZE = 16
 
-def setup_logging() -> None:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%H:%M:%S",
-    )
+# === LAYER SELECTION ===
+# hidden_states 인덱싱:
+#   0    = embedding layer (transformer pass 전)
+#   1~12 = transformer layers
+#   12   = last (v2 default, surface 패턴 편향)
+#   6    = mid-layer (semantic info가 더 강하게 보존)
+LAYER = 12
 
-
-def detect_device() -> torch.device:
-    """CUDA > MPS > CPU 자동 선택."""
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        return torch.device("mps")
-    return torch.device("cpu")
-
-
-def load_data(path: Path, sheet: str | None = None) -> pd.DataFrame:
-    """multi-format auto-detection. sheet는 xlsx에만 적용."""
-    suffix = path.suffix.lower()
-    if suffix == ".jsonl":
-        return pd.read_json(path, lines=True)
-    if suffix == ".json":
-        return pd.read_json(path)
-    if suffix == ".csv":
-        return pd.read_csv(path)
-    if suffix in (".xlsx", ".xls"):
-        return pd.read_excel(path, sheet_name=sheet) if sheet else pd.read_excel(path)
-    if suffix == ".parquet":
-        return pd.read_parquet(path)
-    raise ValueError(f"Unsupported format: {suffix}")
+COL_SENT_ID = "sentence_id"
+COL_TEXT = "text_plain"
 
 
-def report_length_distribution(df: pd.DataFrame, text_col: str) -> None:
-    """길이 분포 보고."""
-    lens = df[text_col].dropna().str.len()
-    logging.info(f"=== Length distribution ({text_col}) ===")
-    logging.info(f"  count: {len(lens):,}")
-    logging.info(f"  mean: {lens.mean():.1f}, median: {lens.median():.0f}")
-    logging.info(f"  min: {lens.min()}, max: {lens.max()}")
-    logging.info(f"  p95: {lens.quantile(0.95):.0f}, p99: {lens.quantile(0.99):.0f}")
-    logging.info(f"  < 3 chars: {(lens < 3).sum():,} ({100*(lens<3).mean():.2f}%)")
-    logging.info(f"  < 5 chars: {(lens < 5).sum():,} ({100*(lens<5).mean():.2f}%)")
-    logging.info(f"  > 60 chars: {(lens > 60).sum():,} ({100*(lens>60).mean():.2f}%)")
+def load_sentences():
+    p = INPUT_PATH
+    if p.suffix == ".xlsx":
+        df = pd.read_excel(p, sheet_name="li_sentences")
+    elif p.suffix == ".jsonl":
+        df = pd.read_json(p, lines=True)
+    else:
+        df = pd.read_csv(p)
+    print(f"Loaded {len(df):,} sentences from {p.name}")
+    return df
 
 
-def extract_target_sentences(df: pd.DataFrame, char: str, text_col: str) -> pd.DataFrame:
-    """타겟 글자 포함 문장 추출."""
-    return df[df[text_col].str.contains(char, na=False, regex=False)].copy()
-
-
-def mean_pool(last_hidden: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
-    """attention mask 고려한 mean pooling.
-
-    last_hidden: (B, L, H), attention_mask: (B, L)
-    """
-    mask = attention_mask.unsqueeze(-1).float()  # (B, L, 1)
-    summed = (last_hidden * mask).sum(dim=1)     # (B, H)
-    counts = mask.sum(dim=1).clamp(min=1e-9)     # (B, 1)
-    return summed / counts
-
-
-@torch.inference_mode()
-def embed_batch(
-    texts: list[str],
-    tokenizer,
-    model,
-    device: torch.device,
-    max_length: int,
-) -> np.ndarray:
+def extract_li_embeddings_batch(sentences, sentence_ids, tokenizer, model, li_token_id, layer):
     enc = tokenizer(
-        texts,
-        padding=True,
-        truncation=True,
-        max_length=max_length,
-        return_tensors="pt",
-    ).to(device)
-    out = model(**enc)
-    pooled = mean_pool(out.last_hidden_state, enc["attention_mask"])
-    return pooled.cpu().numpy()
-
-
-def embed_sentences(
-    df: pd.DataFrame,
-    text_col: str,
-    tokenizer,
-    model,
-    device: torch.device,
-    batch_size: int,
-    max_length: int,
-    desc: str = "embedding",
-) -> np.ndarray:
-    """배치 단위 임베딩."""
-    texts = df[text_col].tolist()
-    out_parts = []
-    for i in tqdm(range(0, len(texts), batch_size), desc=desc):
-        batch = texts[i : i + batch_size]
-        emb = embed_batch(batch, tokenizer, model, device, max_length)
-        out_parts.append(emb)
-    return np.vstack(out_parts)
-
-
-def save_embeddings(df: pd.DataFrame, embeddings: np.ndarray, output_path: Path) -> None:
-    """parquet 저장. embedding은 list-of-list로 저장."""
-    df_out = df.copy()
-    df_out["embedding"] = list(embeddings)  # 각 행이 ndarray → parquet에서 list로 직렬화
-    df_out.to_parquet(output_path, index=False)
-    logging.info(f"saved → {output_path} ({len(df_out):,} rows, dim={embeddings.shape[1]})")
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        sentences,
+        return_tensors="pt", padding=True, truncation=True,
+        max_length=MAX_LENGTH, return_offsets_mapping=True,
     )
-    parser.add_argument("--zhuzi_path", type=Path,
-                        default=Path("data/final/zhuzi_sentences.xlsx"),
-                        help="주자어류 sentence-level 파일")
-    parser.add_argument("--sheet", type=str, default="all_sentences",
-                        help="xlsx 시트명 (xlsx 입력 시에만 적용)")
-    parser.add_argument("--output_dir", type=Path,
-                        default=Path("data/processed/phase1/embeddings"),
-                        help="출력 디렉토리")
-    parser.add_argument("--text_col", type=str, default="sent_text_plain",
-                        help="임베딩 입력 텍스트 컬럼")
-    parser.add_argument("--id_col", type=str, default="sentence_id",
-                        help="고유 ID 컬럼")
-    parser.add_argument("--target_chars", type=str, nargs="+",
-                        default=TARGET_CHARS,
-                        help="대상 글자들 (기본: 理 心 性 天)")
-    parser.add_argument("--batch_size", type=int, default=DEFAULT_BATCH_SIZE)
-    parser.add_argument("--max_length", type=int, default=DEFAULT_MAX_LENGTH)
-    parser.add_argument("--min_char_count", type=int, default=MIN_CHAR_COUNT,
-                        help="이 글자 수 미만 문장 제외 (기본 3)")
-    parser.add_argument("--model_name", type=str, default=SIKUBERT_MODEL)
-    args = parser.parse_args()
+    input_ids = enc["input_ids"].to(DEVICE)
+    attention_mask = enc["attention_mask"].to(DEVICE)
+    offsets = enc["offset_mapping"]
 
-    setup_logging()
+    with torch.no_grad():
+        out = model(input_ids=input_ids, attention_mask=attention_mask,
+                    output_hidden_states=True)
+    hidden = out.hidden_states[layer]   # ← layer 선택
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    vectors = []
+    records = []
+    truncated_count = 0
 
-    # 1) load
-    logging.info(f"load: {args.zhuzi_path}" + (f" (sheet={args.sheet})" if args.zhuzi_path.suffix.lower() in (".xlsx", ".xls") else ""))
-    df = load_data(args.zhuzi_path, sheet=args.sheet)
-    logging.info(f"total sentences: {len(df):,}")
-    logging.info(f"columns: {df.columns.tolist()}")
+    for b_idx, sent_id in enumerate(sentence_ids):
+        orig_text = sentences[b_idx]
+        seq_ids = input_ids[b_idx]
+        seq_offsets = offsets[b_idx].tolist()
 
-    if args.text_col not in df.columns:
-        raise KeyError(f"text_col '{args.text_col}' not in columns: {df.columns.tolist()}")
-    if args.id_col not in df.columns:
-        raise KeyError(f"id_col '{args.id_col}' not in columns: {df.columns.tolist()}")
+        li_positions = (seq_ids == li_token_id).nonzero(as_tuple=True)[0].tolist()
+        orig_li_count = orig_text.count(TARGET_CHAR)
+        if len(li_positions) < orig_li_count:
+            truncated_count += 1
 
-    # 2) 길이 분포
-    report_length_distribution(df, args.text_col)
+        for li_idx_in_sent, tok_pos in enumerate(li_positions):
+            vec = hidden[b_idx, tok_pos].cpu().numpy().astype(np.float32)
+            vectors.append(vec)
 
-    # 3) 길이 필터
-    initial = len(df)
-    df = df[df[args.text_col].str.len() >= args.min_char_count].copy()
-    filtered = initial - len(df)
-    logging.info(
-        f"filtered <{args.min_char_count} chars: {filtered:,} "
-        f"({100*filtered/initial:.2f}%) → remaining {len(df):,}"
-    )
+            start, end = seq_offsets[tok_pos]
+            char_left = orig_text[max(0, start - CONTEXT_WINDOW):start]
+            char_right = orig_text[end:end + CONTEXT_WINDOW]
 
-    # 4) device + model
-    device = detect_device()
-    logging.info(f"device: {device}")
-    logging.info(f"loading model: {args.model_name}")
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    model = AutoModel.from_pretrained(args.model_name).to(device)
+            records.append({
+                "token_id": f"{sent_id}_li{li_idx_in_sent + 1}",
+                "sentence_id": sent_id,
+                "li_idx_in_sent": li_idx_in_sent + 1,
+                "token_pos": int(tok_pos),
+                "char_pos_in_sent": int(start),
+                "char_left": char_left,
+                "char_right": char_right,
+            })
+
+    return vectors, records, truncated_count
+
+
+def main():
+    print(f"\n=== Token Embedding Extraction (LAYER {LAYER}) ===")
+    print(f"Model:   {MODEL_NAME}")
+    print(f"Device:  {DEVICE}")
+    print(f"Layer:   {LAYER} (0=embedding, 12=last)\n")
+
+    df = load_sentences()
+    if COL_TEXT not in df.columns:
+        raise KeyError(f"Column '{COL_TEXT}' not found. Available: {list(df.columns)}")
+
+    print("Loading model...")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModel.from_pretrained(MODEL_NAME).to(DEVICE)
     model.eval()
 
-    # 5) 글자별 처리
-    keep_cols_optional = ["has_li", "has_qi", "li_qi_category", "source_id"]
+    li_token_id = tokenizer.convert_tokens_to_ids(TARGET_CHAR)
+    print(f"  {TARGET_CHAR} token_id = {li_token_id}")
+    print(f"  Total transformer layers: {model.config.num_hidden_layers}\n")
 
-    for char in args.target_chars:
-        logging.info(f"\n=== {char} ===")
-        sub = extract_target_sentences(df, char, args.text_col)
-        logging.info(f"sentences containing '{char}': {len(sub):,}")
+    all_vectors = []
+    all_records = []
+    total_truncated = 0
 
-        if len(sub) == 0:
-            logging.warning(f"  no sentences for '{char}', skip")
-            continue
+    sentences = df[COL_TEXT].tolist()
+    sentence_ids = df[COL_SENT_ID].tolist()
 
-        embeddings = embed_sentences(
-            sub, args.text_col, tokenizer, model, device,
-            args.batch_size, args.max_length,
-            desc=f"embed {char}",
+    for start in tqdm(range(0, len(sentences), BATCH_SIZE), desc=f"Embed L{LAYER}"):
+        end = min(start + BATCH_SIZE, len(sentences))
+        batch_sents = sentences[start:end]
+        batch_ids = sentence_ids[start:end]
+        vecs, recs, trunc = extract_li_embeddings_batch(
+            batch_sents, batch_ids, tokenizer, model, li_token_id, LAYER
         )
+        all_vectors.extend(vecs)
+        all_records.extend(recs)
+        total_truncated += trunc
 
-        # 저장 컬럼 정리
-        keep_cols = [args.id_col, args.text_col]
-        for c in keep_cols_optional:
-            if c in sub.columns:
-                keep_cols.append(c)
-        sub = sub[keep_cols].reset_index(drop=True)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    vectors_arr = np.stack(all_vectors)
+    np.save(OUTPUT_VECTORS, vectors_arr)
+    mapping_df = pd.DataFrame(all_records)
+    mapping_df.to_parquet(OUTPUT_MAPPING, index=False)
 
-        output_path = args.output_dir / f"{char}_embeddings.parquet"
-        save_embeddings(sub, embeddings, output_path)
-
-    logging.info("done.")
+    print("\n" + "=" * 60)
+    print(f"DONE (LAYER {LAYER})")
+    print(f"  Total 理 tokens: {len(all_records):,}")
+    print(f"  Vector shape:    {vectors_arr.shape}")
+    print(f"  Truncated:       {total_truncated}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
