@@ -1,0 +1,230 @@
+{"sentence_id": "Z000162", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재하나 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000164", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理를 얻는다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000166", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理를 밝힌다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000167", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理를 전한다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000168", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理를 가린다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000170", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "理가 행한다는 능동적 표현"}
+{"sentence_id": "Z000174", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 밝아진다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000175", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "理學은 학문적 용어로 사용됨"}
+{"sentence_id": "Z000177", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 밝지 않다는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000179", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 본이라는 말만 있고 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z000181", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理一而名殊: 理의 통일성 언급"}
+{"sentence_id": "Z000272", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "天下之理: 理의 총체적 존재 언급"}
+{"sentence_id": "Z000282", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理有可以類通: 理의 분류 가능성 언급"}
+{"sentence_id": "Z000283", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "此理融會: 理의 통합성 언급"}
+{"sentence_id": "Z000354", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "明理: 일상적 용법"}
+{"sentence_id": "Z000356", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理有不明: 理의 이해 여부 언급"}
+{"sentence_id": "Z000358", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "私勝而理微: 理의 약화 상태 언급"}
+{"sentence_id": "Z000390", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "太極只是天地萬物之理: 理의 총체적 존재 언급"}
+{"sentence_id": "Z000392", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "先有此理: 理의 선후 관계 언급"}
+{"sentence_id": "Z000393", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "亦只是理: 理의 존재 방식 언급"}
+{"sentence_id": "Z000399", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 天地의 선후 관계만 언급"}
+{"sentence_id": "Z000400", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 天地의 존재 관계만 언급"}
+{"sentence_id": "Z000401", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "理가 氣를 통해 萬物을 發育시킴"}
+{"sentence_id": "Z000402", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계 및 理의 무형체성 언급"}
+{"sentence_id": "Z000404", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 극한에 대한 논의"}
+{"sentence_id": "Z000406", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "太極이 理임을 언급"}
+{"sentence_id": "Z000407", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후 관계만 언급"}
+{"sentence_id": "Z000409", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 상호 의존성 언급"}
+{"sentence_id": "Z000410", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "氣와 理의 관계만 언급"}
+{"sentence_id": "Z000412", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "天理와 氣의 선후 관계만 언급"}
+{"sentence_id": "Z000413", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理與氣'는 주제 제시, 판단 불가"}
+{"sentence_id": "Z000414", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理一分殊'는 능동/수동 미결정"}
+{"sentence_id": "Z000415", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'有是理便有是氣'는 선후 관계만 언급"}
+{"sentence_id": "Z000416", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理是本'은 능동/수동 미결정"}
+{"sentence_id": "Z000427", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'備箇動静隂陽之理'는 능동/수동 미결정"}
+{"sentence_id": "Z000431", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'有是理而後有是氣'는 선후 관계만 언급"}
+{"sentence_id": "Z000434", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理未嘗離乎氣'는 관계만 언급"}
+{"sentence_id": "Z000435", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理形而上者'는 능동/수동 미결정"}
+{"sentence_id": "Z000436", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'先有是理'는 선후 관계만 언급"}
+{"sentence_id": "Z000437", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理存乎是氣之中'는 관계만 언급"}
+{"sentence_id": "Z000438", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理가 氣에 의존함을 명시"}
+{"sentence_id": "Z000439", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 대응만 언급"}
+{"sentence_id": "Z000440", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후만 논함"}
+{"sentence_id": "Z000441", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 氣 중에 드러남만 언급"}
+{"sentence_id": "Z000442", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理가 氣에 부착함을 명시"}
+{"sentence_id": "Z000445", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후만 논함"}
+{"sentence_id": "Z000446", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 氣에 의존함을 언급"}
+{"sentence_id": "Z000447", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理가 작용하지 못함을 명시"}
+{"sentence_id": "Z000449", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理가 작용하지 못함을 명시"}
+{"sentence_id": "Z000450", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 氣 중에 있음만 언급"}
+{"sentence_id": "Z000451", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후 관계 언급"}
+{"sentence_id": "Z000452", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후 관계 언급"}
+{"sentence_id": "Z000453", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 선후 관계 언급"}
+{"sentence_id": "Z000454", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000455", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000460", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000461", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 心의 관계 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000474", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000480", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000481", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z000484", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'道理'는 일상적 용법으로 쓰임"}
+{"sentence_id": "Z000487", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理為主'는 능동/수동 미결정"}
+{"sentence_id": "Z000490", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'訓理'는 능동/수동 미결정"}
+{"sentence_id": "Z000527", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理無内外'는 능동/수동 미결정"}
+{"sentence_id": "Z000537", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'復來之理'는 능동/수동 미결정"}
+{"sentence_id": "Z000559", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'不食之理'는 능동/수동 미결정"}
+{"sentence_id": "Z000562", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'隂陽五行之理'는 능동/수동 미결정"}
+{"sentence_id": "Z000570", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'同者理也'는 능동/수동 미결정"}
+{"sentence_id": "Z000571", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'其理則一'는 능동/수동 미결정"}
+{"sentence_id": "Z000575", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'在人則為理'는 능동/수동 미결정"}
+{"sentence_id": "Z000576", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'各具五行之理'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z000589", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理透'는 이치가 투명함을 의미"}
+{"sentence_id": "Z000590", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'有條理'는 체계적임을 의미"}
+{"sentence_id": "Z000662", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹'는 이해하다는 의미"}
+{"sentence_id": "Z000789", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'無此理'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z000790", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'以理推之'는 이치로 추론함을 의미"}
+{"sentence_id": "Z000791", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'以理推之'는 이치로 추론함을 의미"}
+{"sentence_id": "Z000812", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理或有之'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z000870", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'其理如何'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z000892", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'即此理也'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z000900", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'無是理'는 理의 존재 여부만 언급"}
+{"sentence_id": "Z000952", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹得'는 이해하다의 의미"}
+{"sentence_id": "Z000953", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹得'는 이해하다의 의미"}
+{"sentence_id": "Z000996", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'自有此理'는 理의 존재만 언급"}
+{"sentence_id": "Z001034", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'地理圖'는 지리학적 용어"}
+{"sentence_id": "Z001070", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理會'는 이해하다의 의미"}
+{"sentence_id": "Z001073", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'合理㑹'는 적절히 이해함의 의미"}
+{"sentence_id": "Z001074", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹得'는 이해하다의 의미"}
+{"sentence_id": "Z001075", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹'는 이해하다의 의미"}
+{"sentence_id": "Z001077", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹'는 이해하다의 의미"}
+{"sentence_id": "Z001078", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理會得'는 이해하다의 의미"}
+{"sentence_id": "Z001082", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理會'는 이해하다의 의미"}
+{"sentence_id": "Z001083", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㸔'은 이해하다의 의미"}
+{"sentence_id": "Z001085", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹'는 이해하다의 의미"}
+{"sentence_id": "Z001089", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001107", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001108", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001110", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001111", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001112", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理㑹'는 이해하다의 의미"}
+{"sentence_id": "Z001114", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001117", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001125", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001141", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "理會는 이해하다의 의미로 사용됨"}
+{"sentence_id": "Z001145", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001153", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001154", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001156", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "理가 발육만물의 주체로 서술됨"}
+{"sentence_id": "Z001157", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001171", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理가 스스로 작용하지 못함이 명시됨"}
+{"sentence_id": "Z001172", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001173", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001174", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001177", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급됨"}
+{"sentence_id": "Z001178", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "道理가 일상적 용법으로 쓰임"}
+{"sentence_id": "Z001183", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001185", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001187", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재 여부만 언급됨"}
+{"sentence_id": "Z001189", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001190", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 갖추어짐으로 서술됨"}
+{"sentence_id": "Z001192", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理는 무형이며, 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001197", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理는 존재하나, 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001201", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "聚散은 氣의 작용이며, 理의 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001202", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理는 氣에 부착하며, 스스로 작용하지 않음."}
+{"sentence_id": "Z001203", "rep": 1, "model": "deepseek/deepseek-chat", "label": "B", "basis": "理는 氣의 작용에 의존하며, 스스로 작용하지 않음."}
+{"sentence_id": "Z001204", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "感格之理는 존재하나, 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001207", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "感通之理는 존재하나, 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001208", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "無是理는 존재하나, 능동/수동이 드러나지 않음."}
+{"sentence_id": "Z001209", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "正理는 일상적 용법으로 쓰임."}
+{"sentence_id": "Z001210", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "正理는 일상적 용법으로 쓰임."}
+{"sentence_id": "Z001211", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001218", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001219", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001221", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001225", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001227", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001239", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001270", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001360", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001372", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'가 존재하나 능동/수동 미결정"}
+{"sentence_id": "Z001374", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 관용적 용법으로 쓰임"}
+{"sentence_id": "Z001375", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 관용적 용법으로 쓰임"}
+{"sentence_id": "Z001376", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'의 능동/수동이 드러나지 않음"}
+{"sentence_id": "Z001378", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 관용적 용법으로 쓰임"}
+{"sentence_id": "Z001387", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 관용적 용법으로 쓰임"}
+{"sentence_id": "Z001421", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 관용적 용법으로 쓰임"}
+{"sentence_id": "Z001425", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理會'는 이해하다의 의미"}
+{"sentence_id": "Z001429", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'의 능동/수동이 드러나지 않음"}
+{"sentence_id": "Z001432", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理'의 능동/수동이 드러나지 않음"}
+{"sentence_id": "Z001434", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "'理'가 '生生而不窮'으로 능동적 존재로 서술됨"}
+{"sentence_id": "Z001435", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재하나 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z001436", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계만 언급, 작용 여부는 없음"}
+{"sentence_id": "Z001437", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 주제이나 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z001438", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계만 언급, 작용 여부는 없음"}
+{"sentence_id": "Z001440", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 결합만 언급, 작용 여부는 없음"}
+{"sentence_id": "Z001471", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재하나 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z001472", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계만 언급, 작용 여부는 없음"}
+{"sentence_id": "Z001475", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "道理는 일상적 용법으로 쓰임"}
+{"sentence_id": "Z001476", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "道理는 일상적 용법으로 쓰임"}
+{"sentence_id": "Z001477", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재하나 작용 여부는 언급되지 않음"}
+{"sentence_id": "Z001488", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "'根於理而日生者'에서 理가 생성을 주도함"}
+{"sentence_id": "Z001490", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001496", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理合如此'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001498", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'有感格之理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001501", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'無非此理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001504", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理會'는 이해하다의 의미로 사용됨"}
+{"sentence_id": "Z001519", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'鬼神之理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001537", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'别是一理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001551", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'鬼神之理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001559", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'感通之理'에서 理의 존재 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001560", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'顯然不易之理'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z001567", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'義理'는 일상적 용법"}
+{"sentence_id": "Z001577", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理相闗'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z001590", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'何理'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z001633", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'道理'는 일상적 용법"}
+{"sentence_id": "Z001634", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'無此理'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z001638", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "'理行正當'에서 理가 능동적으로 작용"}
+{"sentence_id": "Z001640", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'道理'는 일상적 용법"}
+{"sentence_id": "Z001641", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'窮理'는 일상적 용법"}
+{"sentence_id": "Z001658", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理同'과 '理絶不同'에서 理의 능동/수동 미결정"}
+{"sentence_id": "Z001659", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "'天命流行'에서 理가 능동적으로 작용함"}
+{"sentence_id": "Z001660", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001661", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001668", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001670", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001672", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001674", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001678", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001692", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001694", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 능동/수동이 명확히 드러나지 않음"}
+{"sentence_id": "Z001695", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'물건이 이 이치를 갖지 않는다'는 존재 여부만 언급"}
+{"sentence_id": "Z001702", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'같음'과 '다름'을 설명하나 능동/수동은 불명"}
+{"sentence_id": "Z001703", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 존재 여부만 언급, 작용 여부는 불명"}
+{"sentence_id": "Z001704", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 관점에서 설명하나 작용 여부는 불명"}
+{"sentence_id": "Z001706", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 존재 여부만 언급, 작용 여부는 불명"}
+{"sentence_id": "Z001707", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 역할 설명하나 작용 여부는 불명"}
+{"sentence_id": "Z001708", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 역할 설명하나 작용 여부는 불명"}
+{"sentence_id": "Z001709", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "리와 기의 관계 설명하나 작용 여부는 불명"}
+{"sentence_id": "Z001712", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'조리'는 일상적 용어"}
+{"sentence_id": "Z001718", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'의리'의 존재 여부만 언급, 작용 여부는 불명"}
+{"sentence_id": "Z001719", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'理'가 '이해하다'의 의미로 사용됨."}
+{"sentence_id": "Z001736", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001737", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理와 氣의 관계만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001739", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "'道理'가 일상적 용법으로 사용됨."}
+{"sentence_id": "Z001742", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001743", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001744", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001745", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001747", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001748", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理의 존재만 언급, 작용 여부 불명."}
+{"sentence_id": "Z001749", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'才有筆便有理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001751", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'固是有理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001786", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'只是理如此'에서 理의 상태만 언급"}
+{"sentence_id": "Z001787", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'莫尊於理'에서 理의 존엄성만 언급"}
+{"sentence_id": "Z001793", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'造化之理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001794", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'是理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001795", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'亦是理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001797", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'主理言'에서 理의 주제만 언급"}
+{"sentence_id": "Z001798", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'理何所受'에서 理의 존재만 언급"}
+{"sentence_id": "Z001801", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "'心中所有底道理'에서 理의 존재만 언급"}
+{"sentence_id": "Z001802", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "性即理也, 理의 능동/수동 미언급"}
+{"sentence_id": "Z001803", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 무형영함만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001805", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재함만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001806", "rep": 1, "model": "deepseek/deepseek-chat", "label": "A", "basis": "理가 사물을 이루는 주체로 서술됨"}
+{"sentence_id": "Z001811", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 실리임만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001818", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "理會得는 이해하다는 뜻"}
+{"sentence_id": "Z001819", "rep": 1, "model": "deepseek/deepseek-chat", "label": "N", "basis": "理㑹得는 이해하다는 뜻"}
+{"sentence_id": "Z001827", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 기에 의존함만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001828", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 기에 의존함만 언급, 능동/수동 미결정"}
+{"sentence_id": "Z001829", "rep": 1, "model": "deepseek/deepseek-chat", "label": "C", "basis": "理가 존재함만 언급, 능동/수동 미결정"}
