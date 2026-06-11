@@ -217,7 +217,7 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
     row += 1
     notes = [
         "• 출처: 공공데이터포털 한국문집총간 release 2024-08-30 (data.go.kr/data/3074298)",
-        "• 퇴계 측 22편 = 권16+권17 명언 letters (황준연(2009) 표 1의 12편 corpus의 superset)",
+        "• 퇴계 측 22편 = 권16+권17 명언 letters (핵심 7편 식별 기준: 김세종(2024), 한국철학논집 83)",
         "• 율곡 측 9편 = 권11 답성호원 letters (1572 壬申, 사단칠정 논변 본체)",
         "• 표점 부여: SikuRoBERTa-PUNC-AJD-KLC (한국고전번역원 AJD/KLC 표점 시스템)",
         "• 분절 기준: hanja.dev 출력의 종결자 (。？！?!) — 한 letter = 1 paragraph",
