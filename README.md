@@ -125,7 +125,7 @@
 
 판본 정보는 `docs/editions.md` 참조.
 
-- 주자어류 저본: 京都大學 漢籍リポジトリ (Kanripo, KR3a0047)
+- 주자어류 저본: Kanseki Repository (漢籍リポジトリ, Kanripo; KR3a0047)
 - 주자어류 표점: hanja.dev (SikuRoBERTa-PUNC-AJD-KLC; Song et al. 2025, HERITAGE)
 - 퇴계선생문집·율곡선생전서: 한국문집총간 (한국고전번역원; 공공데이터포털 XML, release 2024-08-30)
 - 임베딩 모델: SIKU-BERT/sikubert
@@ -212,8 +212,8 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
 - **2026-06-11**: 최종보고서 기준 문서 동기화. LLM 판정 결과·AI 사용 정보·데이터 수집 시점을 README에 명시, requirements.txt 정비, Phase 0 집계 스크립트(16) 추가, 퇴계 핵심 7편 식별 출처를 김세종(2024, 한국철학논집 83)으로 정정(종전 황준연(2009) 오기), 인용 매칭 6자 이상 수치를 산출물 기준으로 정정(퇴계 42·율곡 8)
 - **2026-06-01**: LLM 문장별 판정 파이프라인(30·31_llm_agreement) 및 결과 추가 (OpenRouter 2모델, 8,428문장)
 - **2026-05-14**: Phase 1 토큰 임베딩 전환 (문장 임베딩 → 理 토큰 임베딩), Phase 2 LCS+IDF 인용 매칭 파이프라인 추가
-- **2026-05-06 (v2)**: 표점 부여 hanja.dev 일원화. 주자어류·서신 동일 규칙
-- **2026-04-28 (v1)**: 초기 파이프라인. 祝平次 표점 + hanja.dev fallback 혼합
+- **2026-05-06**: 표점 부여 hanja.dev 일원화. 주자어류·서신 동일 규칙
+- **2026-04-28**: 초기 파이프라인. 祝平次 표점 + hanja.dev fallback 혼합
 
 ## 라이선스
 

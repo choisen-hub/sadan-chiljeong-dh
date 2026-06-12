@@ -217,8 +217,8 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
 - **2026-06-11**: Documentation sync against the final report. LLM adjudication results, AI usage, and data collection dates recorded in README; requirements.txt rebuilt; Phase 0 stats script (16) added; source for the 7 core Toegye letters corrected to Kim Sejong (2024, *Han'guk ch'ŏrhak nonjip* 83) (previously misattributed to Hwang Junyeon (2009)); ≥6-char citation counts corrected against the outputs (Toegye 42, Yulgok 8)
 - **2026-06-01**: Sentence-level LLM adjudication pipeline (30, 31_llm_agreement) and results added (2 models via OpenRouter, 8,428 sentences)
 - **2026-05-14**: Phase 1 switched to token embeddings (from sentence embeddings); Phase 2 LCS+IDF citation matching pipeline added
-- **2026-05-06 (v2)**: Punctuation unified to hanja.dev for both *Zhuzi yulei* and the letters
-- **2026-04-28 (v1)**: Initial pipeline (祝平次 punctuation + hanja.dev fallback)
+- **2026-05-06**: Punctuation unified to hanja.dev for both *Zhuzi yulei* and the letters
+- **2026-04-28**: Initial pipeline (祝平次 punctuation + hanja.dev fallback)
 
 ## License
 
