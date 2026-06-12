@@ -1,7 +1,7 @@
 """
 LLM 비교 실험용 프롬프트 4개 파일을 생성한다.
 
-산출물 (data/llm_compare/prompts/):
+산출물 (archive/llm_compare/data/prompts/):
     prompts_dataX.txt              데이터 미제시 (모든 모델 × N=3 공통)
     prompts_dataO_seed42.txt       데이터 제시 (seed=42 표본 200문장 포함)
     prompts_dataO_seed123.txt      데이터 제시 (seed=123 표본 200문장 포함)
@@ -13,8 +13,8 @@ GitHub 저장소 공개를 통해 18개 셀에 던진 프롬프트 텍스트의 
 
 import os
 
-SAMPLE_DIR = 'data/llm_compare'
-OUTDIR = 'data/llm_compare/prompts'
+SAMPLE_DIR = 'archive/llm_compare/data'
+OUTDIR = 'archive/llm_compare/data/prompts'
 SEEDS = [42, 123, 456]
 
 

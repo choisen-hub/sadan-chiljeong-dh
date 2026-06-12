@@ -8,7 +8,7 @@ archive/
 ├── superseded_phase1/   Phase 1 구버전 (문장 임베딩 v1 계열)
 ├── superseded_phase2/   Phase 2 부속 구버전
 ├── validation/          개발 중 검증·확인용 일회성 스크립트
-└── llm_compare/         LLM 예비 실험 (총괄 판단 방식; 본 실험은 scripts/30·31)
+└── llm_compare/         LLM 예비 실험: 스크립트 + 산출물 data/ (본 실험은 scripts/30·31)
 ```
 
 ## v1_pipeline/ — v1 데이터 파이프라인
@@ -54,11 +54,13 @@ v1 검증 산출물(`data/processed/`의 `alignment_summary.csv`, `zhuzi_mismatc
 | `test_hanja_local.py` | 모델 로딩 패턴 발견용 minimal example | `common/punctuate_hanja.py`의 `_load_model()` 원형 |
 | `check_tokenizer.py` | SikuBERT 토크나이저의 理 단일 토큰 처리·위치 추출 검증 | Phase 1 토큰 임베딩 전환 시 검증 |
 
+이 폴더의 [`data/`](validation/data/)에는 v2 전환기(표점 일원화)에 사용한 평가 샘플이 보존되어 있다: 칸리포·祝平次 양 판본에서 같은 대목을 추출한 표점 비교 샘플(`samples_with_zhuzi_punct.txt`, `samples_for_hanja_dev.txt`)과 추출 위치 메타데이터(`samples_meta.json`).
+
 검증된 로직은 `common/` 및 `scripts/`의 정식 코드에 통합되어 있다.
 
 ## llm_compare/ — LLM 예비 실험
 
-문장별 판정(`scripts/30_llm_judgment.py`) 이전에 수행한 총괄 판단 방식 비교 실험. 무작위 표본을 모델에 일괄 제시하고 경향에 대한 총평을 받는 방식으로, 모델 간 분기의 존재를 처음 관찰한 실험이다. 산출물(프롬프트·응답)은 [`data/llm_compare/`](../data/llm_compare/)에 보존.
+문장별 판정(`scripts/30_llm_judgment.py`) 이전에 수행한 총괄 판단 방식 비교 실험. 무작위 표본을 모델에 일괄 제시하고 경향에 대한 총평을 받는 방식으로, 모델 간 분기의 존재를 처음 관찰한 실험이다. 산출물(프롬프트·응답)은 본 폴더의 [`data/`](llm_compare/data/)에 보존.
 
 | 파일 | 역할 |
 |---|---|
@@ -67,4 +69,5 @@ v1 검증 산출물(`data/processed/`의 `alignment_summary.csv`, `zhuzi_mismatc
 
 ## 변경 이력
 
+- **2026-06-13**: 표점 평가 샘플 `data/eval/`을 `archive/validation/data/`로 이동. 예비 실험 산출물 `data/llm_compare/`를 `archive/llm_compare/data/`로 이동(비활성 산출물의 archive 일원화). 관련 경로 참조 일괄 갱신.
 - **2026-06-12**: 평면 구조였던 archive/를 하위 폴더 5개(v1_pipeline, superseded_phase1, superseded_phase2, validation, llm_compare)로 재구조화. `scripts/_archive/`의 구버전 스크립트를 본 폴더로 통합하여 비활성 코드 보존 위치를 일원화.

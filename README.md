@@ -63,7 +63,7 @@
 
 ### 다중 LLM 문장별 판정 (보고서 §5.4 → RQ3 보완)
 
-- `archive/llm_compare/` — 예비 실험 (총괄 판단 방식, 모델 간 분기 관찰; 산출물 `data/llm_compare/`)
+- `archive/llm_compare/` — 예비 실험 (총괄 판단 방식, 모델 간 분기 관찰; 산출물은 같은 폴더의 `data/`)
 - `30_llm_judgment.py` — 理 문장 8,428건 문장별 A/B/C/U/N 판정 (OpenRouter, temperature=0)
 - `31_llm_agreement.py` — 모델 간 일치도·Fleiss κ·합의/논쟁 문장 추출 (산출물 `data/llm_judgment/`, 상세는 해당 폴더 README)
 
@@ -196,7 +196,6 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
   - `final/` — 최종 xlsx (커밋)
     - `zhuzi_sentences.xlsx`, `corpus_review.xlsx`
     - `li_clustering_results.xlsx`, `citation_candidates_review.xlsx`
-  - `llm_compare/` — 예비 실험 프롬프트·응답
   - `llm_judgment/` — LLM 문장별 판정 결과 (폴더 README 참조)
 - `figures/` — 보고서 그림
   - `fig_pipeline.png` (그림 4-1, 전체 분석 프로세스; 생성: `scripts/40_pipeline_figure.py`)

@@ -2,8 +2,8 @@
 주자어류 내 '理' 출현 8,443문장에서 200건씩 무작위 표본 3개를 추출한다.
 seed: 42, 123, 456
 산출물:
-    data/llm_compare/sample_seed{seed}.txt (프롬프트 인라인 삽입용)
-    data/llm_compare/sample_seed{seed}.csv (sentence_id 포함, 재현용 메타데이터)
+    archive/llm_compare/data/sample_seed{seed}.txt (프롬프트 인라인 삽입용)
+    archive/llm_compare/data/sample_seed{seed}.csv (sentence_id 포함, 재현용 메타데이터)
 
 본 스크립트는 사단칠정 디지털 인문학 연구의 LLM 비교 실험을 위한
 표본 추출 단계이다. 동일한 seed로 다시 실행하면 동일한 200문장이
@@ -22,7 +22,7 @@ ID_COL = 'sentence_id'
 # 경로 및 파라미터
 SOURCE = 'data/final/zhuzi_sentences.xlsx'
 SHEET = 'li_sentences'
-OUTDIR = 'data/llm_compare'
+OUTDIR = 'archive/llm_compare/data'
 SEEDS = [42, 123, 456]
 N = 200
 
