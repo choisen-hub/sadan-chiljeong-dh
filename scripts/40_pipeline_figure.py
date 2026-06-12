@@ -2,6 +2,8 @@
 40_pipeline_figure.py
 
 그림 4-1: 전체 분석 프로세스 개념도 생성.
+Phase 0(데이터 수집·전처리·기초 분포 분석)을 외곽 박스로 묶고,
+Phase 1·Phase 2·LLM 판정이 RQ1~RQ3에 대응하는 구조.
 
 출력:
   figures/fig_pipeline.png
@@ -32,82 +34,93 @@ plt.rcParams["font.family"] = [
 ]
 plt.rcParams["axes.unicode_minus"] = False
 
-C_COLLECT = "#EAF2FA"; C_PREP = "#FDF3E3"; C_DATA = "#EDF7ED"
-C_PHASE = "#F4EEFA"; C_RQ = "#FFFFFF"
-EDGE = "#666666"
-
 
 def main():
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(18, 10), dpi=100)
-    ax.set_xlim(0, 18); ax.set_ylim(-0.45, 10); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(18, 10.6), dpi=100)
+    ax.set_xlim(0, 18); ax.set_ylim(-0.45, 10.15); ax.axis("off")
 
-    def box(x, y, w, h, title, lines, fc, title_fs=15, body_fs=12.5):
-        ax.add_patch(FancyBboxPatch((x, y), w, h,
-                                    boxstyle="round,pad=0.08,rounding_size=0.12",
-                                    fc=fc, ec=EDGE, lw=1.4))
-        ax.text(x + w/2, y + h - 0.42, title, ha="center", va="center",
-                fontsize=title_fs, fontweight="bold", color="#222222")
-        for i, ln in enumerate(lines):
-            ax.text(x + w/2, y + h - 0.95 - i*0.42, ln, ha="center", va="center",
-                    fontsize=body_fs, color="#333333")
+    C_COLLECT = "#EAF2FA"; C_PREP = "#FDF3E3"; C_DATA = "#EDF7ED"; C_STAT = "#FBEFF2"
+    C_PHASE0_BG = "#F8F7FC"; C_PHASE = "#F4EEFA"; C_RQ = "#FFFFFF"
+    EDGE = "#666666"; P0_EDGE = "#9B8BB4"; PH_COLOR = "#4A2A7A"
+
+    def box(x, y, w, h, title, lines, fc, title_fs=14.5, body_fs=11.8, ec=EDGE, lw=1.4):
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.07,rounding_size=0.12",
+                                    fc=fc, ec=ec, lw=lw))
+        if lines:
+            ax.text(x + w/2, y + h - 0.40, title, ha="center", va="center",
+                    fontsize=title_fs, fontweight="bold", color="#222222")
+            for i, ln in enumerate(lines):
+                ax.text(x + w/2, y + h - 0.90 - i*0.40, ln, ha="center", va="center",
+                        fontsize=body_fs, color="#333333")
+        elif title:
+            ax.text(x + w/2, y + h/2, title, ha="center", va="center",
+                    fontsize=title_fs, fontweight="bold", color="#222222")
 
     def arrow(x1, y1, x2, y2):
         ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="-|>",
-                                     mutation_scale=22, lw=2.0, color="#555555"))
+                                     mutation_scale=20, lw=2.0, color="#555555"))
 
-    def stage(x, w, label):
-        ax.text(x + w/2, 9.55, label, ha="center", va="center",
-                fontsize=16, fontweight="bold", color="#1A4E7A")
+    # ════ Phase 0 외곽 박스 ════
+    ax.add_patch(FancyBboxPatch((0.3, 4.45), 17.4, 5.35,
+                                boxstyle="round,pad=0.10,rounding_size=0.18",
+                                fc=C_PHASE0_BG, ec=P0_EDGE, lw=1.8))
+    ax.text(0.62, 9.42, "Phase 0", fontsize=16, fontweight="bold", color=PH_COLOR,
+            ha="left", va="center")
+    ax.text(2.42, 9.42, "데이터 구축과 기초 분석", fontsize=13.5, color="#555555",
+            ha="left", va="center")
 
-    # ── 상단: 수집 → 전처리 → 분석 데이터 ──
-    stage(0.4, 4.6, "데이터 수집 (4.1)")
-    box(0.4, 7.0, 4.6, 2.1, "주자어류",
-        ["칸리포(Kanripo) KR3a0047", "원문 XML 수집"], C_COLLECT)
-    box(0.4, 4.5, 4.6, 2.1, "퇴계·율곡 서신",
-        ["공공데이터포털", "한국고전번역원_한국문집총간 XML"], C_COLLECT, body_fs=11.8)
+    def stage(xc, label):
+        ax.text(xc, 8.72, label, ha="center", va="center",
+                fontsize=13.5, fontweight="bold", color="#1A4E7A")
 
-    stage(6.4, 4.6, "데이터 전처리 (4.2)")
-    box(6.4, 5.6, 4.6, 2.6, "자동 표점·문장 분리",
-        ["SikuRoBERTa-PUNC-AJD-KLC", "이체자 처리·판본 검증", "문장 단위 통일"], C_PREP)
+    # 내부 4단: 수집 → 전처리 → 분석 데이터 → 기초 분포 분석
+    stage(2.55, "데이터 수집 (4.1)")
+    box(0.75, 6.85, 3.6, 1.55, "주자어류",
+        ["칸리포(Kanripo)", "KR3a0047 원문 XML"], C_COLLECT, body_fs=11.2)
+    box(0.75, 4.85, 3.6, 1.55, "퇴계·율곡 서신",
+        ["공공데이터포털", "한국문집총간 XML"], C_COLLECT, body_fs=11.2)
 
-    stage(12.6, 5.0, "분석 데이터")
-    box(12.6, 5.6, 5.0, 2.6, "최종 데이터 (표 4-1)",
-        ["주자어류 71,645문장 (理 8,443)", "퇴계 서신 1,305문장", "율곡 서신 776문장"], C_DATA)
+    stage(7.0, "데이터 전처리 (4.2)")
+    box(5.15, 5.55, 3.7, 2.15, "자동 표점·문장 분리",
+        ["SikuRoBERTa-PUNC-AJD-KLC", "이체자 처리·판본 검증", "문장 단위 통일"], C_PREP, body_fs=11.0)
 
-    arrow(5.1, 8.0, 6.3, 7.4)
-    arrow(5.1, 5.6, 6.3, 6.3)
-    arrow(11.1, 6.9, 12.5, 6.9)
-    arrow(15.1, 5.5, 15.1, 4.55)
+    stage(11.45, "분석 데이터")
+    box(9.65, 5.55, 3.6, 2.15, "최종 데이터 (표 4-1)",
+        ["주자어류 71,645문장", "(理 포함 8,443)", "서신 2,081문장"], C_DATA, body_fs=11.2)
 
-    # ── 하단: 분석 파이프라인 → RQ ──
-    ax.text(0.4 + 14.0/2, 3.85, "분석 파이프라인 (4.3)", ha="center", va="center",
-            fontsize=16, fontweight="bold", color="#1A4E7A")
-    box(0.4, 2.3, 14.0, 1.25, "", [], C_PHASE)
-    ax.text(0.75, 2.92, "Phase 0–1", fontsize=14, fontweight="bold",
-            color="#4A2A7A", va="center")
-    ax.text(2.6, 2.92, "핵심 글자 분포 정량화 + 理 토큰 임베딩 비지도 군집화 "
-                       "(SikuBERT, K-means·HDBSCAN)", fontsize=12.5, va="center")
-    box(0.4, 1.15, 14.0, 0.95, "", [], C_PHASE)
-    ax.text(0.75, 1.62, "Phase 2", fontsize=14, fontweight="bold",
-            color="#4A2A7A", va="center")
-    ax.text(2.6, 1.62, "형태론적 인용 매칭 (LCS × IDF) — 퇴계·율곡 서신 ↔ 주자어류",
-            fontsize=12.5, va="center")
-    box(0.4, 0.0, 14.0, 0.95, "", [], C_PHASE)
-    ax.text(0.75, 0.47, "Phase 3", fontsize=14, fontweight="bold",
-            color="#4A2A7A", va="center")
-    ax.text(2.6, 0.47, "다중 LLM 문장별 판정 (gpt-4.1-mini · gemini-2.5-flash, "
-                       "temperature=0)", fontsize=12.5, va="center")
+    stage(15.75, "기초 분포 분석")
+    box(14.05, 5.55, 3.4, 2.15, "핵심 글자 분포 정량화",
+        ["理·氣 등 출현 빈도와", "공기 패턴 집계", "(표 5-1)"], C_STAT, title_fs=13.5, body_fs=11.2)
 
-    def rq(y, yc, label):
-        box(15.4, y, 2.2, 0.95, "", [], C_RQ)
-        ax.text(16.5, yc, label, ha="center", va="center",
-                fontsize=15, fontweight="bold", color="#7A2A2A")
+    arrow(4.42, 7.6, 5.05, 7.1)
+    arrow(4.42, 5.65, 5.05, 6.2)
+    arrow(8.92, 6.6, 9.55, 6.6)
+    arrow(13.32, 6.6, 13.95, 6.6)
 
-    rq(2.45, 2.92, "RQ1"); rq(1.15, 1.62, "RQ2"); rq(0.0, 0.47, "RQ3")
-    arrow(14.5, 2.92, 15.3, 2.92)
-    arrow(14.5, 1.62, 15.3, 1.62)
-    arrow(14.5, 0.47, 15.3, 0.47)
+    # Phase 0 → 본 분석
+    arrow(9.0, 4.32, 9.0, 3.62)
+
+    # ════ 본 분석 3행 → RQ ════
+    rows = [
+        ("Phase 1", "理 토큰 임베딩 비지도 군집화 (SikuBERT, K-means·HDBSCAN)", "RQ1"),
+        ("Phase 2", "형태론적 인용 매칭 (LCS × IDF): 퇴계·율곡 서신 ↔ 주자어류", "RQ2"),
+        ("LLM 판정", "다중 LLM 문장별 판정 (gpt-4.1-mini · gemini-2.5-flash, temperature=0)", "RQ3"),
+    ]
+    ROW_H, GAP, Y0 = 0.92, 0.22, 0.0
+    for i, (ph, desc, rqlab) in enumerate(rows):
+        y = Y0 + (len(rows) - 1 - i) * (ROW_H + GAP)
+        yc = y + ROW_H / 2
+        box(0.4, y, 14.0, ROW_H, "", [], C_PHASE)
+        ax.text(0.78, yc, ph, fontsize=14, fontweight="bold", color=PH_COLOR, va="center")
+        ax.text(2.75, yc, desc, fontsize=12.3, va="center")
+        box(15.4, y, 2.2, ROW_H, rqlab, [], C_RQ, title_fs=15)
+        ax.text(16.5, yc, "", ha="center")
+        # RQ 라벨 색 보정: box()가 검정으로 그렸으니 덧칠
+        ax.text(16.5, yc, rqlab, ha="center", va="center", fontsize=15,
+                fontweight="bold", color="#7A2A2A",
+                bbox=dict(boxstyle="square,pad=0.08", fc=C_RQ, ec="none"))
+        arrow(14.55, yc, 15.32, yc)
 
     plt.tight_layout(pad=0.4)
     plt.savefig(OUTPUT, dpi=100, bbox_inches="tight", facecolor="white")

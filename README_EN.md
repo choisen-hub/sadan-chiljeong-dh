@@ -19,7 +19,9 @@ This project examines the hypothesis that the textual polysemy of the *Zhuzi yul
 
 Stage divisions follow the chapter structure of the final report.
 
-### Data Collection & Preprocessing (Report §4.1–4.2)
+### Phase 0: Data Construction & Baseline Analysis (Report §4.1–4.2, §5.1)
+
+Phase 0 spans data collection and preprocessing (scripts 01–15) plus the quantitative distribution of key characters (16); together they form the common basis for all subsequent analyses.
 
 - `common/punctuate_hanja.py` — shared module for punctuation restoration with SikuRoBERTa-PUNC-AJD-KLC
 
@@ -38,8 +40,7 @@ Correspondence processing (22 Toegye letters + 9 Yulgok letters):
 - `14_annotate_letters.py` — 理/氣 flags
 - `15_export_letters_xlsx.py` — final spreadsheet
 
-### Phase 0: Quantitative Distribution Analysis (Report §5.1)
-
+Baseline distribution analysis:
 - `16_letter_char_stats.py` — distribution of key characters in the correspondence data (reproduces Report Table 5-1)
 
 ### Phase 1: Embedding Clustering of 理 (Report §5.2 → RQ1)
@@ -83,7 +84,7 @@ The matching domain is restricted to 理-containing sentence pairs: 510 letter s
 | Letters | 31 (22 Toegye + 9 Yulgok) |
 | Letter sentences | 2,081 (1,305 Toegye + 776 Yulgok, avg. 23.3 chars) |
 
-### Phase 0: Distributional Asymmetry (Report Table 5-1)
+### Phase 0 Baseline: Distributional Asymmetry (Report Table 5-1)
 
 | Item | Toegye | Yulgok | Ratio (Y/T) |
 |---|---|---|---|
@@ -214,7 +215,7 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
 
 ## Changelog
 
-- **2026-06-12**: Synchronized with the finalized report. Final title reflected; terminology unified ('corpus' → 'data'); cluster identity labels added to both UMAP figures (`24_visualize_clusters.py` patched with size-rank-based mapping); overall process diagram (Figure 4-1) and its generator (`40_pipeline_figure.py`) added; English README added; citation-table corrections reflected (T0513 → shared source, Cheng Mingdao's "Dingxing shu"; Y0018 → idiomatic 是理當如此, not a citation)
+- **2026-06-12**: Synchronized with the finalized report. Phase 0 redefined explicitly as the whole of data construction (collection & preprocessing) plus the baseline distribution analysis, matching Report §4.3 and Figure 4-1. Final title reflected; terminology unified ('corpus' → 'data'); cluster identity labels added to both UMAP figures (`24_visualize_clusters.py` patched with size-rank-based mapping); overall process diagram (Figure 4-1) and its generator (`40_pipeline_figure.py`) added; English README added; citation-table corrections reflected (T0513 → shared source, Cheng Mingdao's "Dingxing shu"; Y0018 → idiomatic 是理當如此, not a citation)
 - **2026-06-11**: Documentation sync against the final report. LLM adjudication results, AI usage, and data collection dates recorded in README; requirements.txt rebuilt; Phase 0 stats script (16) added; source for the 7 core Toegye letters corrected to Kim Sejong (2024, *Han'guk ch'ŏrhak nonjip* 83) (previously misattributed to Hwang Junyeon (2009)); ≥6-char citation counts corrected against the outputs (Toegye 42, Yulgok 8)
 - **2026-06-01**: Sentence-level LLM adjudication pipeline (30, 31_llm_agreement) and results added (2 models via OpenRouter, 8,428 sentences)
 - **2026-05-14**: Phase 1 switched to token embeddings (from sentence embeddings); Phase 2 LCS+IDF citation matching pipeline added
