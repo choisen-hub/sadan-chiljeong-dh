@@ -52,7 +52,7 @@
 - `24_visualize_clusters.py` — silhouette curve, UMAP 2D 시각화
 - `28_cluster_interpretation.py` — 클러스터별 대표 문장 + bigram 추출
 
-초기의 문장 단위 임베딩 분석(理·心·性·天 비교, 보고서 §5.2.2 전반부)은 `scripts/_archive/22_embed_li_sentences_v1_sentence_emb.py.bak`로 보존되어 있다.
+초기의 문장 단위 임베딩 분석(理·心·性·天 비교, 보고서 §5.2.2 전반부)은 `archive/superseded_phase1/22_embed_li_sentences_v1_sentence_emb.py.bak`로 보존되어 있다.
 
 ### Phase 2: 인용 매칭 (보고서 §5.3 → RQ2)
 
@@ -63,7 +63,7 @@
 
 ### 다중 LLM 문장별 판정 (보고서 §5.4 → RQ3 보완)
 
-- `scripts/llm_compare/` — 예비 실험 (집계형 판정, 모델 간 분기 관찰; 산출물 `data/llm_compare/`)
+- `archive/llm_compare/` — 예비 실험 (총괄 판단 방식, 모델 간 분기 관찰; 산출물 `data/llm_compare/`)
 - `30_llm_judgment.py` — 理 문장 8,428건 문장별 A/B/C/U/N 판정 (OpenRouter, temperature=0)
 - `31_llm_agreement.py` — 모델 간 일치도·Fleiss κ·합의/논쟁 문장 추출 (산출물 `data/llm_judgment/`, 상세는 해당 폴더 README)
 
@@ -190,9 +190,7 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
 - `requirements.txt`
 - `common/punctuate_hanja.py`
 - `config/letter_targets.yaml` — 서신 추출 대상 정의
-- `scripts/` — 실행 스크립트 (번호 순)
-  - `llm_compare/` — LLM 예비 실험 스크립트
-  - `_archive/` — 구버전·실험 잔재 (문장 임베딩 v1 등)
+- `scripts/` — 실행 스크립트 (번호 순; 활성 코드만)
 - `data/`
   - `raw/`, `intermediate/`, `processed/` — git 제외
   - `final/` — 최종 xlsx (커밋)
@@ -206,11 +204,11 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
   - `fig_umap_kmeans.png` (그림 5-2; K=4 패널에 군집 정체 레이블)
   - `fig_umap_hdbscan.png` (그림 5-3; 군집 정체 레이블)
 - `docs/` — 판본 정보, provenance, Phase 1 판정 rubric
-- `archive/` — v1 파이프라인 잔재 (폴더 README 참조)
+- `archive/` — 비활성 코드 보존 (v1 파이프라인·Phase 1/2 구버전·검증 스크립트·LLM 예비 실험; 폴더 README 참조)
 
 ## 변경 이력
 
-- **2026-06-12**: 최종보고서 확정판 동기화. Phase 0 정의를 '데이터 구축(수집·전처리)과 기초 분포 분석 전체'로 명확화(보고서 §4.3·그림 4-1과 일치). 보고서 제목 확정 반영, '코퍼스'→'데이터' 용어 통일, UMAP 그림 2종에 군집 정체 레이블 추가(`24_visualize_clusters.py` 패치 — 크기 순위 기반 매핑), 전체 프로세스 개념도(그림 4-1) 및 생성 스크립트(`40_pipeline_figure.py`) 추가, 영문 README(`README_EN.md`) 추가, 인용 매칭 표 정정 반영(T0513 → 程明道 「定性書」 공통 전거, Y0018 → 是理當如此 관용 표현)
+- **2026-06-12**: 최종보고서 확정판 동기화. archive/를 하위 폴더 5개로 재구조화하고 `scripts/_archive/`를 통합(비활성 코드 보존 위치 일원화). Phase 0 정의를 '데이터 구축(수집·전처리)과 기초 분포 분석 전체'로 명확화(보고서 §4.3·그림 4-1과 일치). 보고서 제목 확정 반영, '코퍼스'→'데이터' 용어 통일, UMAP 그림 2종에 군집 정체 레이블 추가(`24_visualize_clusters.py` 패치 — 크기 순위 기반 매핑), 전체 프로세스 개념도(그림 4-1) 및 생성 스크립트(`40_pipeline_figure.py`) 추가, 영문 README(`README_EN.md`) 추가, 인용 매칭 표 정정 반영(T0513 → 程明道 「定性書」 공통 전거, Y0018 → 是理當如此 관용 표현)
 - **2026-06-11**: 최종보고서 기준 문서 동기화. LLM 판정 결과·AI 사용 정보·데이터 수집 시점을 README에 명시, requirements.txt 정비, Phase 0 집계 스크립트(16) 추가, 퇴계 핵심 7편 식별 출처를 김세종(2024, 한국철학논집 83)으로 정정(종전 황준연(2009) 오기), 인용 매칭 6자 이상 수치를 산출물 기준으로 정정(퇴계 42·율곡 8)
 - **2026-06-01**: LLM 문장별 판정 파이프라인(30·31_llm_agreement) 및 결과 추가 (OpenRouter 2모델, 8,428문장)
 - **2026-05-14**: Phase 1 토큰 임베딩 전환 (문장 임베딩 → 理 토큰 임베딩), Phase 2 LCS+IDF 인용 매칭 파이프라인 추가

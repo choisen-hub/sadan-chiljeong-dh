@@ -52,7 +52,7 @@ Baseline distribution analysis:
 - `24_visualize_clusters.py` — silhouette curve, UMAP 2D visualization (cluster identity labels included)
 - `28_cluster_interpretation.py` — representative sentences and bigrams per cluster
 
-The earlier sentence-level embedding analysis (理·心·性·天 comparison, first half of Report §5.2.2) is preserved as `scripts/_archive/22_embed_li_sentences_v1_sentence_emb.py.bak`.
+The earlier sentence-level embedding analysis (理·心·性·天 comparison, first half of Report §5.2.2) is preserved as `archive/superseded_phase1/22_embed_li_sentences_v1_sentence_emb.py.bak`.
 
 ### Phase 2: Citation Matching (Report §5.3 → RQ2)
 
@@ -63,7 +63,7 @@ The matching domain is restricted to 理-containing sentence pairs: 510 letter s
 
 ### Multi-LLM Sentence-Level Adjudication (Report §5.4 → complements RQ3)
 
-- `scripts/llm_compare/` — pilot experiments (aggregate-level judgments; outputs in `data/llm_compare/`)
+- `archive/llm_compare/` — pilot experiments (aggregate-level judgments; outputs in `data/llm_compare/`)
 - `30_llm_judgment.py` — A/B/C/U/N adjudication of 8,428 理 sentences (OpenRouter, temperature=0)
 - `31_llm_agreement.py` — inter-model agreement, Fleiss κ, consensus/contested sentence extraction (outputs in `data/llm_judgment/`; see folder README)
 
@@ -195,9 +195,7 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
 - `requirements.txt`
 - `common/punctuate_hanja.py`
 - `config/letter_targets.yaml` — letter extraction targets
-- `scripts/` — numbered pipeline scripts
-  - `llm_compare/` — LLM pilot experiments
-  - `_archive/` — superseded versions (sentence-embedding v1, etc.)
+- `scripts/` — numbered pipeline scripts (active code only)
 - `data/`
   - `raw/`, `intermediate/`, `processed/` — git-ignored
   - `final/` — final spreadsheets (committed)
@@ -211,11 +209,11 @@ python3 scripts/31_llm_agreement.py --merged data/llm_judgment/merged_2models.cs
   - `fig_umap_kmeans.png` (Figure 5-2; cluster identity labels on the K=4 panel)
   - `fig_umap_hdbscan.png` (Figure 5-3; cluster identity labels)
 - `docs/` — edition notes, provenance, Phase 1 decision rubric
-- `archive/` — v1 pipeline remnants (see folder README)
+- `archive/` — preserved inactive code (v1 pipeline, superseded Phase 1/2 versions, validation scripts, LLM pilot experiments; see folder README)
 
 ## Changelog
 
-- **2026-06-12**: Synchronized with the finalized report. Phase 0 redefined explicitly as the whole of data construction (collection & preprocessing) plus the baseline distribution analysis, matching Report §4.3 and Figure 4-1. Final title reflected; terminology unified ('corpus' → 'data'); cluster identity labels added to both UMAP figures (`24_visualize_clusters.py` patched with size-rank-based mapping); overall process diagram (Figure 4-1) and its generator (`40_pipeline_figure.py`) added; English README added; citation-table corrections reflected (T0513 → shared source, Cheng Mingdao's "Dingxing shu"; Y0018 → idiomatic 是理當如此, not a citation)
+- **2026-06-12**: Synchronized with the finalized report. Reorganized archive/ into five subfolders and merged `scripts/_archive/` into it (single location for preserved inactive code). Phase 0 redefined explicitly as the whole of data construction (collection & preprocessing) plus the baseline distribution analysis, matching Report §4.3 and Figure 4-1. Final title reflected; terminology unified ('corpus' → 'data'); cluster identity labels added to both UMAP figures (`24_visualize_clusters.py` patched with size-rank-based mapping); overall process diagram (Figure 4-1) and its generator (`40_pipeline_figure.py`) added; English README added; citation-table corrections reflected (T0513 → shared source, Cheng Mingdao's "Dingxing shu"; Y0018 → idiomatic 是理當如此, not a citation)
 - **2026-06-11**: Documentation sync against the final report. LLM adjudication results, AI usage, and data collection dates recorded in README; requirements.txt rebuilt; Phase 0 stats script (16) added; source for the 7 core Toegye letters corrected to Kim Sejong (2024, *Han'guk ch'ŏrhak nonjip* 83) (previously misattributed to Hwang Junyeon (2009)); ≥6-char citation counts corrected against the outputs (Toegye 42, Yulgok 8)
 - **2026-06-01**: Sentence-level LLM adjudication pipeline (30, 31_llm_agreement) and results added (2 models via OpenRouter, 8,428 sentences)
 - **2026-05-14**: Phase 1 switched to token embeddings (from sentence embeddings); Phase 2 LCS+IDF citation matching pipeline added
