@@ -38,6 +38,31 @@ plt.rcParams["font.family"] = ["AppleGothic", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
 
+
+# ── 군집 정체 레이블 (보고서 5.2.2의 분석에 따른 각 군집의 지배적 표현) ──
+# 군집 ID 대신 크기 내림차순 순위로 매핑: random_state 고정 하에서도 ID가 바뀌어도 안전.
+KMEANS_LABELS_BY_SIZE_RANK = ["之理·此理", "道理·義理", "理會", "天理"]
+HDBSCAN_LABELS_BY_SIZE_RANK = ["之理·此理", "道理·義理", "理會", "天理", "窮理"]
+
+
+def annotate_clusters(ax, X2, labels, names_by_rank, exclude=(-1,)):
+    """군집 중심 위에 정체 레이블을 단다 (크기 내림차순 순위 → 이름)."""
+    from collections import Counter
+    sizes = Counter(int(l) for l in labels if l not in exclude)
+    for rank, (c, _) in enumerate(sizes.most_common()):
+        if rank >= len(names_by_rank):
+            break
+        m = labels == c
+        cx = X2[m, 0].mean()
+        top = X2[m, 1].max()
+        ax.annotate(
+            names_by_rank[rank], (cx, top),
+            xytext=(cx, top + 0.7), ha="center", va="bottom",
+            fontsize=13, fontweight="bold",
+            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.88),
+        )
+
+
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -94,6 +119,8 @@ def main():
     axes[1].set_title(f"K-means K={best_k} (silhouette={best_sil:.4f}, BEST)")
     axes[1].set_xlabel("UMAP-1"); axes[1].set_ylabel("UMAP-2")
 
+    annotate_clusters(axes[1], X2, labels_k, KMEANS_LABELS_BY_SIZE_RANK)
+
     fig.suptitle("UMAP 2D + K-means clusters (理 token embeddings)", fontsize=14)
     fig.tight_layout()
     fig.savefig(OUTPUT_DIR / "fig_umap_kmeans.png", dpi=150)
@@ -136,6 +163,7 @@ def main():
     ax.set_xlabel("UMAP-1"); ax.set_ylabel("UMAP-2")
     if len(unique_clusters) <= 12:
         ax.legend(loc="best", fontsize=8, markerscale=2)
+    annotate_clusters(ax, X2, labels_h, HDBSCAN_LABELS_BY_SIZE_RANK)
     fig.tight_layout()
     fig.savefig(OUTPUT_DIR / "fig_umap_hdbscan.png", dpi=150)
     plt.close(fig)
