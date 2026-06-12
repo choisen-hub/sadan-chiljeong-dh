@@ -222,7 +222,7 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
         "• 표점 부여: SikuRoBERTa-PUNC-AJD-KLC (한국고전번역원 AJD/KLC 표점 시스템)",
         "• 분절 기준: hanja.dev 출력의 종결자 (。？！?!) — 한 letter = 1 paragraph",
         "• 理/氣 annotate: sent_text_plain (백문) 기준, 표점에 우연히 동일 글자가 있어도 영향 없음",
-        "• 자세한 판본 정보: docs/판본정보.md",
+        "• 자세한 판본 정보: docs/editions.md",
         "• 모델 호출 메타데이터: docs/letter_punctuation_provenance.md",
     ]
     for note in notes:

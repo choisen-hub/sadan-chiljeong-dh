@@ -127,7 +127,7 @@ The matching domain is restricted to 理-containing sentence pairs: 510 letter s
 
 ## Data Sources
 
-See `docs/판본정보.md` for edition details.
+See `docs/editions.md` for edition details.
 
 - *Zhuzi yulei* base text: Kanseki Repository, Kyoto University (Kanripo, KR3a0047)
 - *Zhuzi yulei* punctuation: hanja.dev (SikuRoBERTa-PUNC-AJD-KLC; Song et al. 2025, HERITAGE)

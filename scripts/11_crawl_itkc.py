@@ -478,7 +478,7 @@ def write_provenance_md(letters: list[Letter], path: Path,
         "",
         "이 파일은 `11_crawl_itkc.py` 가 매 실행 시 덮어씁니다. "
         "수동 편집하지 마세요. 판본/출처 등 안정적인 메타데이터는 "
-        "`docs/판본정보.md` 를 참조하세요.",
+        "`docs/editions.md` 를 참조하세요.",
         "",
         "## Source",
         "",

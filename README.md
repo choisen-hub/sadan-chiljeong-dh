@@ -123,7 +123,7 @@
 
 ## 데이터 출처
 
-판본 정보는 `docs/판본정보.md` 참조.
+판본 정보는 `docs/editions.md` 참조.
 
 - 주자어류 저본: 京都大學 漢籍リポジトリ (Kanripo, KR3a0047)
 - 주자어류 표점: hanja.dev (SikuRoBERTa-PUNC-AJD-KLC; Song et al. 2025, HERITAGE)

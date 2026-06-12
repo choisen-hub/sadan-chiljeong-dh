@@ -19,7 +19,7 @@ v1 파이프라인 잔재. v2부터 hanja.dev 일괄적용으로 전환되면서
 
 `data/processed/` 의 `alignment_summary.csv`, `zhuzi_mismatch_*.csv` 등 v1 검증 산출물은 GitHub 히스토리에 그대로 남겨둔다. v1 단계에서 칸리포·祝平次 판본 일치율 검증을 거쳤다는 흔적은 재현성 측면에서 가치가 있다.
 
-자세한 변경 사유는 [`docs/판본정보.md`](../docs/판본정보.md) 의 변경 이력 참조.
+자세한 변경 사유는 [`docs/editions.md`](../docs/editions.md) 의 변경 이력 참조.
 
 ## 개발 잔재 (v2 도입 검증용)
 

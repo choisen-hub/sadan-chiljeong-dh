@@ -187,7 +187,7 @@ def build_summary_sheet(ws, letters: list[dict], sentences: list[dict]) -> None:
         "• 퇴계 측 22편 = 권16+권17 명언 letters (황준연(2009) 표 1의 12편 corpus의 superset)",
         "• 율곡 측 9편 = 권11 답성호원 letters (1572 壬申, 사단칠정 논변 본체)",
         "• 분절 기준: 한국고전번역원 표점위원회 句點(。) — sentence boundary는 본 연구의 임의 결정 아님",
-        "• 자세한 판본 정보: docs/판본정보.md",
+        "• 자세한 판본 정보: docs/editions.md",
     ]
     for note in notes:
         ws.cell(row=row, column=1, value=note)
